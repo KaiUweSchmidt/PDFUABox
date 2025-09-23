@@ -1,0 +1,10 @@
+{
+  "profiles": {
+    "PDFUABoxSerrvice": {
+      "commandName": "Project"
+    },
+    "Container (Dockerfile)": {
+      "commandName": "Docker"
+    }
+  }
+}
