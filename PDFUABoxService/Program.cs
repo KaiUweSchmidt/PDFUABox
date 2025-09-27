@@ -1,11 +1,13 @@
-﻿namespace PDFUABoxService;
+﻿
+
+namespace PDFUABoxService;
 
 internal class Program
 {
+    [STAThread]
     static void Main(string[] args)
     {
         Console.WriteLine("Hello, World!");
-        FileService fileService = new FileService();
-        fileService.StartSMBServer();
+        Thread.Sleep(500);
     }
 }
