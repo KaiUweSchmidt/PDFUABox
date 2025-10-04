@@ -1,0 +1,73 @@
+<Compliance Name="Log" Operation="Validation" Target="PDF/UA-1">
+	<Version>1.0</Version>
+	<Copyright>Copyright (c) 2001-2025 Aspose Pty Ltd. All Rights Reserved.</Copyright>
+	<Date>29.09.2025 21:09:57</Date>
+	<File Version="1,7" Name="" Pages="1">
+    <Security>
+      <Problem Severity="Error" Clause="7.16" ObjectID="" Page="" Convertable="False" Code="7.16:2(7.6.3.2)">Conversion is not allowed by permission restrictions</Problem>
+    </Security>
+    <General>
+			<Problem Severity="Need manual check" Clause="7.1" ObjectID="" Page="" Convertable="False" Code="7.1:5">Color contrast</Problem>
+			<Problem Severity="Error" Clause="7.1" ObjectID="" Page="" Convertable="True" Code="7.1:6.2">Title missing in document's XMP metadata</Problem>
+		</General>
+		<Text>
+			<Problem Severity="Need manual check" Clause="7.2" ObjectID="" Page="" Convertable="False" Code="7.2:1">Ensure text content is tagged in logical reading order</Problem>
+		</Text>
+    <Fonts>
+      <Problem Severity="Error" Clause="7.3.2" ObjectID="" Page="" Convertable="True" Code="7.3.2:1">Font is not embedded</Problem>
+		</Fonts>
+    <Graphics>
+			<Problems Severity="Error" Clause="7.4.3" ObjectID="" Page="" Convertable="True" Code="7.4.3:1">Image is not tagged</Problems>
+    </Graphics>
+    <Headings>
+      <Problem Severity="Error" Clause="7.4.2" ObjectID="" Page="" Convertable="True" Code="7.4.2:1">The first heading is not on the first level</Problem>
+    </Headings>
+    <Tables>
+      <Problem Severity="Warning" Clause="7.5" ObjectID="" Page="" Convertable="True" Code="7.5:1">Irregular table row</Problem>
+      <Problem Severity="Error" Clause="7.5" ObjectID="" Page="" Convertable="True" Code="7.5:2">Table header cell has no associated subcells</Problem>
+    </Tables>
+    <Lists>
+      <Problem Severity="Error" Clause="7.6" ObjectID="" Page="" Convertable="True" Code="7.6:1">	‘LI’ structure element must be a child of ‘L’ element</Problem>
+      <Problem Severity="Error" Clause="7.6" ObjectID="" Page="" Convertable="True" Code="7.6:2">	‘Lbl’ and ‘LBody’ structure element must be children of ‘LI’ element</Problem>
+    </Lists>
+    <NotesAndReferences>
+      <Problem Severity="Error" Clause="7.9" ObjectID="" Page="" Convertable="True" Code="7.9:2.1">ID missing in ‘Note’ structure element</Problem>
+      <Problem Severity="Error" Clause="7.9" ObjectID="" Page="" Convertable="True" Code="7.9:2.2">ID entry in ‘Note’ structure element is not unique</Problem>
+    </NotesAndReferences>
+    <OptionalContent>
+      <Problem Severity="Error" Clause="7.10" ObjectID="" Page="" Convertable="True" Code="7.10:1">‘Name’ missing in optional content configuration dictionary</Problem>
+      <Problem Severity="Error" Clause="7.10" ObjectID="" Page="" Convertable="True" Code="7.10:2">Optional content configuration dictionary contains ‘AS’ key</Problem>
+    </OptionalContent>
+    <EmbeddedFiles>
+      <Problem Severity="Error" Clause="7.11" ObjectID="" Page="" Convertable="True" Code="7.11:1">‘F’ or ‘UF’ key missing in the file specification</Problem>
+      <Problem Severity="Error" Clause="7.11" ObjectID="" Page="" Convertable="True" Code="7.11:2">‘Desc’ key missing in the file specification</Problem>
+    </EmbeddedFiles>
+    <DigitalSignatures>
+      <Problem Severity="Error" Clause="7.13" ObjectID="" Page="" Convertable="False" Code="7.13:1">Signature form field ‘[FIELD_NAME]’ does not conform to the specification</Problem>
+    </DigitalSignatures>
+    <NonInteractiveForms>
+      <Problem Severity="Error" Clause="7.14" ObjectID="" Page="" Convertable="False" Code="7.14:1">‘PrintField’ attribute missing in non-interactive form item</Problem>
+    </NonInteractiveForms>
+    <XFA>
+      <Problem Severity="Error" Clause="7.15" ObjectID="" Page="" Convertable="False" Code="7.15:1">PDF contains a dynamic XFA form</Problem>
+    </XFA>
+    <Navigation>
+      <Problem Severity="Error" Clause="7.17" ObjectID="" Page="" Convertable="True" Code="7.17:1">Document Outlines Error</Problem>
+    </Navigation>
+    <Annotations>
+			<Problem Severity="Error" Clause="7.18.1" ObjectID="19" Page="1" Convertable="False" Code="7.18.1:2">Alternative description missing for an annotation</Problem>
+			<Problem Severity="Error" Clause="7.18.5" ObjectID="19" Page="1" Convertable="False" Code="7.18.5.2:2">'Link' annotation is missing an alternate description under a 'Content' key</Problem>
+			<Problem Severity="Error" Clause="7.18.1" ObjectID="25" Page="1" Convertable="False" Code="7.18.1:2">Alternative description missing for an annotation</Problem>
+			<Problem Severity="Error" Clause="7.18.5" ObjectID="25" Page="1" Convertable="False" Code="7.18.5.2:2">'Link' annotation is missing an alternate description under a 'Content' key</Problem>
+		</Annotations>
+    <Actions>
+      <Problem Severity="Need manual check" Clause="7.19" ObjectID="" Page="" Convertable="True" Code="7.19:1">Actions were found. Need to check actions according to specification PDF/UA manually</Problem>
+    </Actions>
+    <XObjects>
+      <Problem Severity="Error" Clause="7.20" ObjectID="" Page="" Convertable="True" Code="7.20:1">Reference XObject shall not be used in conforming PDF/UA file</Problem>
+    </XObjects>
+    <VersionIdentification>
+      <!-- Version identification information TODO nicht in Doku unter https://docs.aspose.com/pdf/net/pdf-ua-compliance-test-errors-list/-->
+    </VersionIdentification>
+</File>
+</Compliance>

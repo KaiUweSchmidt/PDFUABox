@@ -1,0 +1,34 @@
+<Compliance Name="Log" Operation="Validation" Target="PDF/UA-1">
+	<Version>1.0</Version>
+	<Copyright>Copyright (c) 2001-2025 Aspose Pty Ltd. All Rights Reserved.</Copyright>
+	<Date>29.09.2025 18:41:38</Date>
+	<File Version="1,7" Name="" Pages="2">
+		<Security/>
+		<General>
+			<Problem Severity="Need manual check" Clause="7.1" ObjectID="" Page="" Convertable="False" Code="7.1:5">Color contrast</Problem>
+			<Problem Severity="Error" Clause="7.1" ObjectID="" Page="" Convertable="True" Code="7.1:6.2">Title missing in document's XMP metadata</Problem>
+		</General>
+		<Text>
+			<Problem Severity="Need manual check" Clause="7.2" ObjectID="" Page="" Convertable="False" Code="7.2:1">Ensure text content is tagged in logical reading order</Problem>
+		</Text>
+		<Fonts/>
+		<Graphics/>
+		<Headings/>
+		<Tables/>
+		<Lists/>
+		<NotesAndReferences/>
+		<OptionalContent/>
+		<EmbeddedFiles/>
+		<DigitalSignatures/>
+		<NonInteractiveForms/>
+		<XFA/>
+		<Navigation/>
+		<Annotations>
+			<Problem Severity="Error" Clause="7.18.1" ObjectID="19" Page="1" Convertable="False" Code="7.18.1:2">Alternative description missing for an annotation</Problem>
+			<Problem Severity="Error" Clause="7.18.5" ObjectID="19" Page="1" Convertable="False" Code="7.18.5.2:2">'Link' annotation is missing an alternate description under a 'Content' key</Problem>
+		</Annotations>
+		<Actions/>
+		<XObjects/>
+		<VersionIdentification/>
+	</File>
+</Compliance>
