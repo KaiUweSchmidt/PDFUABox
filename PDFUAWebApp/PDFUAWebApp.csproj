@@ -12,4 +12,8 @@
     <ProjectReference Include="..\Converter\Converter.csproj" />
   </ItemGroup>
 
+  <PropertyGroup>
+    <NoWarn>$(NoWarn);CA1812;CA1852</NoWarn>
+  </PropertyGroup>
+
 </Project>

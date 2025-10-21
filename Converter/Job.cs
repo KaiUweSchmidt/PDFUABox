@@ -1,14 +1,11 @@
-﻿using Aspose.Pdf;
-using Aspose.Pdf.AI;
+﻿using System.Runtime.InteropServices;
+using Aspose.Pdf;
 using Aspose.Words.Fields;
-using Aspose.Words.Layout;
 using Converter.ComplianceReportModels;
-using System.Xml;
-using System.Xml.Serialization;
 
 namespace Converter;
 
-public class Job
+public class Job : IDisposable
 {
     public string Name { get; set; } = string.Empty;
     public string InputFile { get; set; }
@@ -66,7 +63,7 @@ public class Job
         if(SaveOptions == null)
             throw new InvalidOperationException("SaveOptions is null.");
         
-        var pdfDocument = new Aspose.Pdf.Document(OutputStream);
+        using var pdfDocument = new Aspose.Pdf.Document(OutputStream);
         ResultFile = Path.Combine(TargetDirectory!, Path.GetFileNameWithoutExtension(InputFile) + ".pdf");
 
         pdfDocument.Save(ResultFile);
@@ -104,11 +101,14 @@ public class Job
         if (string.IsNullOrEmpty(pdfFileName))
             throw new ArgumentNullException(nameof(pdfFileName), "pdfFileName is null or empty.");
 
+        var pdfFilePath = Path.GetDirectoryName(pdfFileName);
+        if (pdfFilePath == null)
+            throw new InvalidOperationException("pdfFilePath is null.");
+
 
         using var fileSecurity = new Aspose.Pdf.Facades.PdfFileSecurity();
-        
 
-        pdfFileName = Path.Combine(Path.GetDirectoryName(pdfFileName), "Encrypt Test.pdf");
+        pdfFileName = Path.Combine(pdfFilePath, "Encrypt Test.pdf");
         fileSecurity.BindPdf(pdfFileName);
 
         fileSecurity.EncryptFile("User_P@ssw0rd", "OwnerP@ssw0rd", Aspose.Pdf.Facades.DocumentPrivilege.Print, Aspose.Pdf.Facades.KeySize.x256,
@@ -130,7 +130,6 @@ public class Job
         }
     }
 
-    //TODO activate this
     private void DisposeOutputStream()
     {
         if (OutputStream != null)
@@ -138,5 +137,24 @@ public class Job
             OutputStream.Dispose();
             OutputStream = null!;
         }
+    }
+
+    private bool isDisposed;
+    public void Dispose()
+    {
+        Dispose(true);
+        GC.SuppressFinalize(this);
+    }
+    protected virtual void Dispose(bool disposing)
+    {
+        if (isDisposed) return;
+
+        if (disposing)
+        {
+            // free managed resources
+            DisposeOutputStream();
+        }
+
+        isDisposed = true;
     }
 }

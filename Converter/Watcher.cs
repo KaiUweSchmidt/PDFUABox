@@ -30,7 +30,9 @@ public class Watcher : IDisposable
             throw new InvalidOperationException("Watcher is already started.");
         }
 
+#pragma warning disable CA1303 // Literale nicht als lokalisierte Parameter übergeben
         Console.WriteLine("Engine started.");
+#pragma warning restore CA1303 // Literale nicht als lokalisierte Parameter übergeben
         Console.WriteLine($"Source Directory: {sourceDirectory}");
 
         fileSystemWatcher = new FileSystemWatcher(sourceDirectory);
