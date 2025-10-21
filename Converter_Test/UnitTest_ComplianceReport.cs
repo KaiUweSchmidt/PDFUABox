@@ -1,11 +1,12 @@
 ﻿using Converter;
+using Converter.ComplianceReportModels;
 
-namespace Converter_Test;
+namespace ConverterTest;
 
-public class UnitTest_ComplianceReport
+public class UnitTestComplianceReport
 {
 
-    public UnitTest_ComplianceReport()
+    public UnitTestComplianceReport()
     {
 
     }
@@ -13,7 +14,7 @@ public class UnitTest_ComplianceReport
     [Theory]
     [InlineData(@"testdata\ComlianceReport_Full.xml")]
     [InlineData(@"testdata\ComlianceReport1.xml")]
-    public void Test_ReadComplianceReport(string complianceReportFile)
+    public void TestReadComplianceReport(string complianceReportFile)
     {
         var complianceReport = ComplianceReportSerializer.Deserialize(complianceReportFile);
         Assert.NotNull(complianceReport);

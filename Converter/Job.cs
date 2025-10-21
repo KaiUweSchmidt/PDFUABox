@@ -1,5 +1,7 @@
 ﻿using Aspose.Pdf;
 using Aspose.Words.Layout;
+using Converter.ComplianceReportModels;
+using System.Xml;
 using System.Xml.Serialization;
 
 namespace Converter;
@@ -42,30 +44,34 @@ public class Job
             throw new InvalidOperationException("OutputStream is null.");
         if(SaveOptions == null)
             throw new InvalidOperationException("SaveOptions is null.");
-        
-        var pdfDocument = new Aspose.Pdf.Document(OutputStream);
+
+        using var pdfDocument = new Aspose.Pdf.Document(OutputStream);
         var isPDFUA = pdfDocument.Validate(validatedFile, PdfFormat.PDF_UA_1);
         if (!isPDFUA)
         {
-            XmlSerializer serializer = new XmlSerializer(typeof(Compliance));
-            using TextReader reader = new StreamReader(validatedFile);
-            Compliance? compliance = (Compliance?)serializer.Deserialize(reader);
-            if (compliance != null && compliance.File != null)
+            Compliance? compliance = ComplianceReportSerializer.Deserialize(validatedFile);
+            if (compliance != null && compliance.File != null 
+                && compliance.File.General != null
+                && compliance.File.General.Problems != null)
             {
-                foreach (var problem in compliance.File.General)
+                foreach (var problem in compliance.File.General.Problems)
                 {
-                    Console.WriteLine($"Error Code: {problem.Code}, Code: {problem.Code} Description {problem.Value}");
+                    Console.WriteLine($"Error Code: {problem.Code}, Code: {problem.Code} Description {problem.Description}");
                 }
             }
             Status = JobStatus.Completed;
-        } else {
+
+        }
+        else {
             Status = JobStatus.Failed;
         }
 
         ResetOutputStream();
     }
 
-    private void SetDocumentPrivileges(string pdfFileName)
+#pragma warning disable S1144 // Unused private types or members should be removed
+    private static void SetDocumentPrivileges(string pdfFileName)
+#pragma warning restore S1144 // Unused private types or members should be removed
     {
         if (string.IsNullOrEmpty(pdfFileName))
             throw new ArgumentNullException(nameof(pdfFileName), "pdfFileName is null or empty.");
@@ -76,20 +82,13 @@ public class Job
 
         pdfFileName = Path.Combine(Path.GetDirectoryName(pdfFileName)!, "Encrypt Test.pdf");
         fileSecurity.BindPdf(pdfFileName);
-        //        using var pdfDocument = new Aspose.Pdf.Document(pdfFileName);
-
-        //        var documentPrivilege = Aspose.Pdf.Facades.DocumentPrivilege.ForbidAll;
-        //        documentPrivilege.AllowScreenReaders = true;
-
-        //pdfDocument.Encrypt("user", "owner", documentPrivilege, Aspose.Pdf.CryptoAlgorithm.AESx128, false);
-        //pdfDocument.Encrypt("User_P@ssw0rd", "OwnerP@ssw0rd", documentPrivilege, Aspose.Pdf.CryptoAlgorithm.AESx128, true);
 
         fileSecurity.EncryptFile("User_P@ssw0rd", "OwnerP@ssw0rd", Aspose.Pdf.Facades.DocumentPrivilege.Print, Aspose.Pdf.Facades.KeySize.x256,
     Aspose.Pdf.Facades.Algorithm.AES);
 
         string encryptedFileName = Path.Combine(Path.GetDirectoryName(pdfFileName) ?? string.Empty,
             Path.GetFileNameWithoutExtension(pdfFileName) + "_secured" + Path.GetExtension(pdfFileName));
-        //pdfDocument.Save(encryptedFileName);
+
         fileSecurity.Save(encryptedFileName);
     }
 

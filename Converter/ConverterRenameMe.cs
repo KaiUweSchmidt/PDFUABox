@@ -1,25 +1,18 @@
-﻿using Aspose.Pdf;
-using Aspose.Words;
-using Aspose.Words.Fonts;
-using Aspose.Words.Layout;
-using Aspose.Words.Saving;
+﻿using Aspose.Words.Saving;
 using Microsoft.Extensions.Configuration;
-using System.ComponentModel.DataAnnotations;
-using System.Xml.Linq;
-using System.Xml.Serialization;
 
 namespace Converter;
 
-public class Converter
+public class ConverterRenameMe
 {
-    private static Converter? _instance;
+    private static ConverterRenameMe? _instance;
     private static readonly object _lock = new object();
-    private bool isInitialized = false;
+    private bool isInitialized;
 #pragma warning disable CS8618 // Sigelnton
-    private Converter() { }
+    private ConverterRenameMe() { }
 #pragma warning restore CS8618 // Ein Non-Nullable-Feld muss beim Beenden des Konstruktors einen Wert ungleich NULL enthalten. Fügen Sie ggf. den „erforderlichen“ Modifizierer hinzu, oder deklarieren Sie den Modifizierer als NULL-Werte zulassend.
 
-    public static Converter Instance
+    public static ConverterRenameMe Instance
     {
         get
         {
@@ -27,20 +20,19 @@ public class Converter
             {
                 if (_instance == null)
                 {
-                    _instance = new Converter();
+                    _instance = new ConverterRenameMe();
                 }
                 return _instance;
             }
         }
     }
 
-    public bool IsInitialized { get => isInitialized; private set => isInitialized = value; }
+    public bool IsInitialized { get => isInitialized; }
     public string WorkDirectory { get => workDirectory; }
     public string TargetDirectory { get => targetDirectory; }
 
     private string workDirectory;
     private string targetDirectory;
-    private IConfiguration _configuration;
 
     /// <summary>
     /// Init needs to be called before any jobs can be added for convertion
@@ -54,18 +46,17 @@ public class Converter
             throw new InvalidOperationException("Converter is already initialized.");
         }
 
-        _configuration = configuration ?? throw new ArgumentNullException("No configuration", nameof(Init));
+        ArgumentNullException.ThrowIfNull(configuration);
 
-        this.workDirectory = _configuration["PDFUABOX_WORK"] ??
-            throw new ArgumentException("No configuration for work directory ", nameof(Init));
+        this.workDirectory = configuration["PDFUABOX_WORK"] ??
+            throw new ArgumentException("No configuration for work directory ", nameof(configuration));
         if (string.IsNullOrWhiteSpace(workDirectory))
-            throw new ArgumentException("Work directory is null or empty.", nameof(workDirectory));
+            throw new ArgumentException("Work directory is null oder leer.", nameof(configuration));
 
-        this.targetDirectory = _configuration["PDFUABOX_TARGET"] ??
-            throw new ArgumentException("No configuration for target directory ", nameof(Init));
+        this.targetDirectory = configuration["PDFUABOX_TARGET"] ??
+            throw new ArgumentException("No configuration for target directory ", nameof(configuration));
         if (string.IsNullOrWhiteSpace(targetDirectory))
-            throw new ArgumentException("Target directory is null or empty.", nameof(targetDirectory));
-
+            throw new ArgumentException("Target directory is null oder leer.", nameof(configuration));
 
         isInitialized = true;
     }
@@ -88,7 +79,7 @@ public class Converter
         });
     }
 
-    private Aspose.Words.Saving.PdfSaveOptions CreateDefaultSaveOptions()
+    private static Aspose.Words.Saving.PdfSaveOptions CreateDefaultSaveOptions()
     {
         Aspose.Words.Saving.PdfSaveOptions saveOptions = new Aspose.Words.Saving.PdfSaveOptions();
         saveOptions.PageMode = PdfPageMode.UseOutlines;

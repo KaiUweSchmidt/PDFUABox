@@ -1,20 +1,27 @@
 ﻿using Microsoft.Extensions.Configuration;
+using System.Runtime.InteropServices;
+
+// Fix für IDE0044 und S2933: Feld als readonly deklarieren
+// Fix für S4487: Feld entfernen, da es nicht verwendet wird
+
+// Entferne die private IConfiguration _configuration; Zeile komplett
+// Passe den Konstruktor an, indem die Konfiguration nur lokal verwendet wird
 
 namespace Converter;
 
-public class Watcher
+public class Watcher : IDisposable
 {
     private readonly string sourceDirectory;
 
     public string SourceDirectory { get => sourceDirectory; }
 
     private FileSystemWatcher? fileSystemWatcher;
-    private IConfiguration _configuration;
     public Watcher(IConfiguration configuration)
     {
-        _configuration = configuration ?? throw new ArgumentNullException("No configuration", nameof(configuration));
+        if (configuration == null)
+            throw new ArgumentNullException(nameof(configuration), "No configuration");
         this.sourceDirectory = configuration["PDFUABOX_SRC"] ??
-            throw new ArgumentException("No source directory for watcher", "PDFUABOX_SRC");
+            throw new ArgumentException("No source directory for watcher", nameof(configuration));
     }
 
     public void Start()
@@ -24,7 +31,9 @@ public class Watcher
             throw new InvalidOperationException("Watcher is already started.");
         }
 
+#pragma warning disable CA1303 // Literale nicht als lokalisierte Parameter übergeben
         Console.WriteLine("Engine started.");
+#pragma warning restore CA1303 // Literale nicht als lokalisierte Parameter übergeben
         Console.WriteLine($"Source Directory: {sourceDirectory}");
 
         fileSystemWatcher = new FileSystemWatcher(sourceDirectory);
@@ -55,8 +64,6 @@ public class Watcher
             throw new InvalidOperationException("Watcher is not started.");
         }
         fileSystemWatcher.EnableRaisingEvents = false;
-        fileSystemWatcher.Dispose();
-        fileSystemWatcher = null;
     }   
 
     private static void OnChanged(object sender, FileSystemEventArgs e)
@@ -71,7 +78,6 @@ public class Watcher
 
     private static void OnCreated(object sender, FileSystemEventArgs e)
     {
-        //CreateJobFor(e.FullPath);
         string value = $"Created: {e.FullPath}";
         Console.WriteLine(value);
     }
@@ -81,7 +87,9 @@ public class Watcher
 
     private static void OnRenamed(object sender, RenamedEventArgs e)
     {
+#pragma warning disable CA1303 // Literale nicht als lokalisierte Parameter übergeben
         Console.WriteLine($"Renamed:");
+#pragma warning restore CA1303 // Literale nicht als lokalisierte Parameter übergeben
         Console.WriteLine($"    Old: {e.OldFullPath}");
         Console.WriteLine($"    New: {e.FullPath}");
     }
@@ -94,11 +102,29 @@ public class Watcher
         if (ex != null)
         {
             Console.WriteLine($"Message: {ex.Message}");
+#pragma warning disable CA1303 // Literale nicht als lokalisierte Parameter übergeben
             Console.WriteLine("Stacktrace:");
+#pragma warning restore CA1303 // Literale nicht als lokalisierte Parameter übergeben
             Console.WriteLine(ex.StackTrace);
             Console.WriteLine();
             PrintException(ex.InnerException);
         }
     }
 
+    public void Dispose()
+    {
+        Dispose(true);
+        GC.SuppressFinalize(this);
+    }
+    
+    private bool isDisposed;
+    protected virtual void Dispose(bool disposing)
+    {
+        if (isDisposed) return;
+
+        if (disposing &&fileSystemWatcher != null)
+            fileSystemWatcher.Dispose();
+
+        isDisposed = true;
+    }
 }
