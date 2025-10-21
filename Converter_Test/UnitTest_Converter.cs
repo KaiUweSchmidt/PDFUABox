@@ -23,11 +23,12 @@ public class UnitTestConverter
     }
 
     [Theory]
-    [InlineData(@"testdata\2025_10_Rechnung_5619948855_bearbeitet.docx")]
-    [InlineData(@"testdata\BFSG für Kommunen.docx")]
-    [InlineData(@"testdata\Playbook Barrierefreiheit in Dokumenten.docx")]
+    [InlineData(@"2025_10_Rechnung_5619948855_bearbeitet.docx")]
+    [InlineData(@"BFSG für Kommunen.docx")]
+    [InlineData(@"Playbook Barrierefreiheit in Dokumenten.docx")]
     public async Task TestCreateJob(string inputFile)
     {
+        inputFile = Path.Combine(Directory.GetCurrentDirectory(), "TestData", inputFile);
         var converter = Converter.ConverterRenameMe.Instance;
         if (converter == null)
             throw new InvalidOperationException("Converter instance is null.");
