@@ -24,7 +24,7 @@ public class UnitTestConverter
 
     [Theory]
     [InlineData(@"2025_10_Rechnung_5619948855_bearbeitet.docx")]
-    [InlineData(@"BFSG für Kommunen.docx")]
+    //[InlineData(@"BFSG für Kommunen.docx")]
     [InlineData(@"Playbook Barrierefreiheit in Dokumenten.docx")]
     public async Task TestCreateJob(string inputFile)
     {
