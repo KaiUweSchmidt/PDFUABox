@@ -10,6 +10,8 @@ public class UnitTestSign
     public void TestSigning(string pdfFile)
     {
         pdfFile = Path.Combine(Directory.GetCurrentDirectory(), "TestData", pdfFile);
-        Sign.SignDocument(pdfFile);
+        string pfxFile = Path.Combine(Directory.GetCurrentDirectory(), "TestData", "PDFUABoxTestUser.pfx");
+        Sign.SignDocument(pdfFile,pfxFile, "password123");
+        //TODO: Verify signed PDF
     }
 }
