@@ -1,12 +1,5 @@
-﻿using Aspose.Pdf;
-using Aspose.Words;
-using Aspose.Words.Fonts;
-using Aspose.Words.Layout;
-using Aspose.Words.Saving;
+﻿using Aspose.Words.Saving;
 using Microsoft.Extensions.Configuration;
-using System.ComponentModel.DataAnnotations;
-using System.Xml.Linq;
-using System.Xml.Serialization;
 
 namespace Converter;
 
