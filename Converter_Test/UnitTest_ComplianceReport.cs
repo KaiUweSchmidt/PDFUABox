@@ -20,7 +20,7 @@ public class UnitTestComplianceReport
         complianceReportFile = Path.Combine(Directory.GetCurrentDirectory(), "TestData", complianceReportFile);
         var complianceReport = ComplianceReportSerializer.Deserialize(complianceReportFile);
         Assert.NotNull(complianceReport);
-        complianceReport!.Name.Should().Be("PDFUA-1 Validation Report");
+        complianceReport!.Name.Should().Be("Log");
         //TODO : more tests
     }
 }

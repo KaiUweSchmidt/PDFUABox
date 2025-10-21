@@ -6,7 +6,7 @@ namespace Converter.Test;
 public class UnitTestSign
 {
     [Theory]
-    [InlineData(@"BFSG für Kommunen.pdf")]
+    [InlineData(@"SignTest.pdf")]
     public void TestSigning(string pdfFile)
     {
         pdfFile = Path.Combine(Directory.GetCurrentDirectory(), "TestData", pdfFile);
