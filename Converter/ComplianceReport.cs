@@ -119,13 +119,19 @@ namespace Converter.ComplianceReportModels
         public string? VersionIdentification { get; set; }
     }
 
-    // Category accepts both <Problem .../> and <Problems .../> elements as items
+    // C#
     public class Category
     {
-        [XmlElement("Problem", typeof(Problem))]
-        [XmlElement("Problems", typeof(Problem))]
-        public Collection<Problem>? Problems { get; } = new Collection<Problem>();
+        // direkte Problem-Elemente
+        [XmlElement("Problem")]
+        public Collection<Problem> ProblemItems { get; } = new();
+
+        public IEnumerable<Problem> AllProblems()
+        {
+            foreach (var p in ProblemItems) yield return p;
+        }
     }
+
 
     public class Problem
     {

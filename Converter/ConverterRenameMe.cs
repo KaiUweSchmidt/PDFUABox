@@ -68,14 +68,21 @@ public class ConverterRenameMe
 
         string workFile = Path.Combine(workDirectory!, Path.GetFileName(inputFile));
         File.Copy(inputFile, workFile, true);
-        using Job job = new Job(Path.GetFileNameWithoutExtension(inputFile),
-            workFile, targetDirectory, saveOptions ?? CreateDefaultSaveOptions());
 
-        // Fix: Use Task.Run with a lambda that returns Job after calling job.Run()
         return Task.Run(() =>
         {
-            job.Run();
-            return job;
+            Job job = new(Path.GetFileNameWithoutExtension(inputFile),
+                workFile, targetDirectory, saveOptions ?? CreateDefaultSaveOptions());
+            try
+            {
+                job.Run();
+                return job;
+            }
+            catch
+            {
+                job.Dispose();
+                throw;
+            }
         });
     }
 
