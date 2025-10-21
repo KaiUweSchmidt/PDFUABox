@@ -21,10 +21,10 @@ jobs:
           dotnet-version: ${{ env.DOTNET_VERSION }}
 
       - name: Install dependencies 📂
-        run: dotnet restore PDFUABox
+        run: dotnet restore PDFUABox.sln
 
       - name: Build 🧱
-        run: dotnet build PDFUABox --configuration Release --no-restore
+        run: dotnet build PDFUABox.sln --configuration Release --no-restore
 
       - name: Test 🧪
-        run: dotnet test PDFUABox --configuration Release --no-build
+        run: dotnet test PDFUABox.sln --configuration Release --no-build
