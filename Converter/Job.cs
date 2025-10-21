@@ -1,4 +1,6 @@
 ﻿using Aspose.Pdf;
+using Aspose.Pdf.AI;
+using Aspose.Words.Fields;
 using Aspose.Words.Layout;
 using Converter.ComplianceReportModels;
 using System.Xml;
@@ -12,6 +14,8 @@ public class Job
     public string InputFile { get; set; }
     public string TargetDirectory { get; set; }
     
+    public string? ResultFile { get; set; }
+
     public Stream OutputStream { get; set; }
     Aspose.Words.Saving.PdfSaveOptions SaveOptions { get; set; }
 
@@ -37,6 +41,23 @@ public class Job
         Status = JobStatus.InProgress;
 
         Aspose.Words.Document doc = new Aspose.Words.Document(InputFile);
+        foreach (Field field in doc.Range.Fields)
+        {
+            if (field.Type == FieldType.FieldHyperlink)
+            {
+                FieldHyperlink hyperlink = (FieldHyperlink)field;
+
+                if (hyperlink.SubAddress != null)
+                    continue;
+                if(hyperlink.ScreenTip == null)
+                {
+                    hyperlink.ScreenTip = "Test";
+                }
+                
+            }
+        }
+
+
         doc.Save(OutputStream, SaveOptions);
 
         string validatedFile = Path.Combine(TargetDirectory!, Path.GetFileNameWithoutExtension(InputFile) + "_validated.xml");
@@ -44,8 +65,15 @@ public class Job
             throw new InvalidOperationException("OutputStream is null.");
         if(SaveOptions == null)
             throw new InvalidOperationException("SaveOptions is null.");
+        
+        var pdfDocument = new Aspose.Pdf.Document(OutputStream);
+        ResultFile = Path.Combine(TargetDirectory!, Path.GetFileNameWithoutExtension(InputFile) + ".pdf");
 
-        using var pdfDocument = new Aspose.Pdf.Document(OutputStream);
+        pdfDocument.Save(ResultFile);
+
+        SetDocumentPrivileges(ResultFile);
+        
+        
         var isPDFUA = pdfDocument.Validate(validatedFile, PdfFormat.PDF_UA_1);
         if (!isPDFUA)
         {
@@ -80,7 +108,7 @@ public class Job
         using var fileSecurity = new Aspose.Pdf.Facades.PdfFileSecurity();
         
 
-        pdfFileName = Path.Combine(Path.GetDirectoryName(pdfFileName)!, "Encrypt Test.pdf");
+        pdfFileName = Path.Combine(Path.GetDirectoryName(pdfFileName), "Encrypt Test.pdf");
         fileSecurity.BindPdf(pdfFileName);
 
         fileSecurity.EncryptFile("User_P@ssw0rd", "OwnerP@ssw0rd", Aspose.Pdf.Facades.DocumentPrivilege.Print, Aspose.Pdf.Facades.KeySize.x256,
@@ -92,8 +120,23 @@ public class Job
         fileSecurity.Save(encryptedFileName);
     }
 
-    private void ResetOutputStream() { 
-        OutputStream.Seek(0, SeekOrigin.Begin);
-        OutputStream.Position = 0;
+
+    private void ResetOutputStream()
+    {
+        if (OutputStream != null)
+        {
+            OutputStream.Seek(0, SeekOrigin.Begin);
+            OutputStream.Position = 0;
+        }
+    }
+
+    //TODO activate this
+    private void DisposeOutputStream()
+    {
+        if (OutputStream != null)
+        {
+            OutputStream.Dispose();
+            OutputStream = null!;
+        }
     }
 }

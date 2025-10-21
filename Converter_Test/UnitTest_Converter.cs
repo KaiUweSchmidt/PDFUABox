@@ -1,5 +1,3 @@
-using Microsoft.Extensions.Configuration;
-using System.Threading.Tasks;
 using FluentAssertions;
 namespace ConverterTest;
 
@@ -24,6 +22,7 @@ public class UnitTestConverter
     }
 
     [Theory]
+    [InlineData(@"testdata\2025_10_Rechnung_5619948855_bearbeitet.docx")]
     [InlineData(@"testdata\BFSG für Kommunen.docx")]
     [InlineData(@"testdata\Playbook Barrierefreiheit in Dokumenten.docx")]
     public async Task TestCreateJob(string inputFile)
@@ -47,5 +46,6 @@ public class UnitTestConverter
         Assert.NotNull(job);
         await job.ConfigureAwait(true);
         job.Status.Should().Be(TaskStatus.RanToCompletion);
+        
     }
 }

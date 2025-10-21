@@ -1,20 +1,25 @@
+using Converter;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 
-namespace PDFUAWebApp.Pages
+namespace PDFUAWebApp.Pages;
+
+public class IndexModel : PageModel
 {
-    public class IndexModel : PageModel
+    private readonly ILogger<IndexModel> _logger;
+
+    private Converter.Watcher _watcher;
+
+    public IndexModel(ILogger<IndexModel> logger, Converter.Watcher watcher)
     {
-        private readonly ILogger<IndexModel> _logger;
+        _logger = logger;
+        _watcher = watcher;
+    }
 
-        public IndexModel(ILogger<IndexModel> logger)
-        {
-            _logger = logger;
-        }
+    public Watcher Watcher { get => _watcher;}
 
-        public void OnGet()
-        {
+    public void OnGet()
+    {
 
-        }
     }
 }

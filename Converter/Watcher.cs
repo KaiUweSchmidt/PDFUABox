@@ -1,5 +1,4 @@
 ﻿using Microsoft.Extensions.Configuration;
-using System.Runtime.InteropServices;
 
 // Fix für IDE0044 und S2933: Feld als readonly deklarieren
 // Fix für S4487: Feld entfernen, da es nicht verwendet wird
@@ -31,9 +30,7 @@ public class Watcher : IDisposable
             throw new InvalidOperationException("Watcher is already started.");
         }
 
-#pragma warning disable CA1303 // Literale nicht als lokalisierte Parameter übergeben
         Console.WriteLine("Engine started.");
-#pragma warning restore CA1303 // Literale nicht als lokalisierte Parameter übergeben
         Console.WriteLine($"Source Directory: {sourceDirectory}");
 
         fileSystemWatcher = new FileSystemWatcher(sourceDirectory);

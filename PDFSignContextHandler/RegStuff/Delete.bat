@@ -1,0 +1,1 @@
+regedit Delete_PDFSignContextHandler.reg
