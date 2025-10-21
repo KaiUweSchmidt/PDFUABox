@@ -77,9 +77,9 @@ public class Job : IDisposable
             Compliance? compliance = ComplianceReportSerializer.Deserialize(validatedFile);
             if (compliance != null && compliance.File != null 
                 && compliance.File.General != null
-                && compliance.File.General.Problems != null)
+                && compliance.File.General.AllProblems() != null)
             {
-                foreach (var problem in compliance.File.General.Problems)
+                foreach (var problem in compliance.File.General.AllProblems())
                 {
                     Console.WriteLine($"Error Code: {problem.Code}, Code: {problem.Code} Description {problem.Description}");
                 }
@@ -94,9 +94,7 @@ public class Job : IDisposable
         ResetOutputStream();
     }
 
-#pragma warning disable S1144 // Unused private types or members should be removed
     private static void SetDocumentPrivileges(string pdfFileName)
-#pragma warning restore S1144 // Unused private types or members should be removed
     {
         if (string.IsNullOrEmpty(pdfFileName))
             throw new ArgumentNullException(nameof(pdfFileName), "pdfFileName is null or empty.");

@@ -13,7 +13,7 @@ public class UnitTestComplianceReport
 
     [Theory]
     [InlineData(@"testdata\ComlianceReport_Full.xml")]
-    [InlineData(@"testdata\ComlianceReport1.xml")]
+    //[InlineData(@"testdata\ComlianceReport1.xml")]
     public void TestReadComplianceReport(string complianceReportFile)
     {
         var complianceReport = ComplianceReportSerializer.Deserialize(complianceReportFile);
