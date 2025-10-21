@@ -13,10 +13,11 @@ public class UnitTestComplianceReport
     }
 
     [Theory]
-    [InlineData(@"testdata\ComlianceReport_Full.xml")]
-    //[InlineData(@"testdata\ComlianceReport1.xml")]
+    [InlineData(@"ComlianceReport_Full.xml")]
+    [InlineData(@"ComlianceReport1.xml")]
     public void TestReadComplianceReport(string complianceReportFile)
     {
+        complianceReportFile = Path.Combine(Directory.GetCurrentDirectory(), "TestData", complianceReportFile);
         var complianceReport = ComplianceReportSerializer.Deserialize(complianceReportFile);
         Assert.NotNull(complianceReport);
         complianceReport!.Name.Should().Be("PDFUA-1 Validation Report");
