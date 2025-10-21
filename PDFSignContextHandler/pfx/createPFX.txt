@@ -1,0 +1,7 @@
+$certname = "PDFUABoxTestUser"
+$cert = New-SelfSignedCertificate -Subject "CN=$certname" -CertStoreLocation "Cert:\CurrentUser\My" -KeyExportPolicy Exportable -KeySpec Signature -KeyLength 2048 -KeyAlgorithm RSA -HashAlgorithm SHA256
+Export-Certificate -Cert $cert -FilePath ".\$certname.cer"
+$password = ConvertTo-SecureString -String "password123" -Force -AsPlainText
+Export-PfxCertificate -Cert $cert -FilePath ".\$certname.pfx" -Password $password
+Get-ChildItem -Path "Cert:\CurrentUser\My" | Where-Object {$_.Subject -Match "$certname"} | Select-Object Thumbprint, FriendlyName
+#Remove-Item -Path Cert:\CurrentUser\My\__pasteTheCertificateThumbprintHere__ -DeleteKey

@@ -1,3 +1,5 @@
+using PDFUAWebApp.Extensions;
+
 namespace PDFUAWebApp;
 
 public class Program
@@ -5,12 +7,15 @@ public class Program
     public static void Main(string[] args)
     {
         var builder = WebApplication.CreateBuilder(args);
-
+        builder.Environment.ContentRootPath = @"C:\PDFUABoxFiles";
+        Console.WriteLine($"builder.Environment.ContentRootPath: {Path.GetFullPath(builder.Environment.ContentRootPath)}");
         // Add services to the container.
         builder.Services.AddRazorPages();
         
+        builder.Services.AddWatcher(builder.Configuration.GetSection("Converter"));
+        
         var app = builder.Build();
-
+        
         // Configure the HTTP request pipeline.
         if (!app.Environment.IsDevelopment())
         {
