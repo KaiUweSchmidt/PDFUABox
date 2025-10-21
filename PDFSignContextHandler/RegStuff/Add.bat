@@ -1,0 +1,1 @@
+regedit Add_PDFSignContextHandler.reg

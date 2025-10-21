@@ -1,4 +1,5 @@
 ﻿using Microsoft.Extensions.Configuration;
+using System.Diagnostics;
 
 namespace Converter;
 
@@ -23,9 +24,8 @@ public class Watcher
         {
             throw new InvalidOperationException("Watcher is already started.");
         }
-
         Console.WriteLine("Engine started.");
-        Console.WriteLine($"Source Directory: {sourceDirectory}");
+        Console.WriteLine($"Source Directory: {sourceDirectory} exists: {Directory.Exists(sourceDirectory)}");
 
         fileSystemWatcher = new FileSystemWatcher(sourceDirectory);
         fileSystemWatcher.NotifyFilter = NotifyFilters.Attributes
