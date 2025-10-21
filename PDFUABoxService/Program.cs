@@ -18,7 +18,8 @@ internal class Program
             .SetBasePath(Directory.GetCurrentDirectory())
             .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
             .AddJsonFile($"appsettings.{environmentName}.json", optional: true)
-            .Build();
+            .Build()
+            .GetSection("Converter");
 
         var converter = Converter.Converter.Instance;
         converter.Init(configuration);
