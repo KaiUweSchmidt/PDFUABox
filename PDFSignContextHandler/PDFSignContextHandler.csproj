@@ -8,17 +8,19 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.22.1" />
+    <PackageReference Include="Aspose.PDF" Version="25.9.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Test-Cmd\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <InternalsVisibleTo Include="PDFSignContextHandler_Test.UnitTest_PDFSignContextHandler" />
   </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\Converter\Converter.csproj" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <None Update="appsettings.json">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-  </ItemGroup>
-
+  </ItemGroup>  
+  
 </Project>
