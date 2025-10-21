@@ -1,20 +1,24 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 
-namespace PDFUAWebApp.Pages
+namespace PDFUAWebApp.Pages;
+
+internal sealed class PrivacyModel : PageModel
 {
-    public class PrivacyModel : PageModel
+    private readonly ILogger<PrivacyModel> _logger;
+    // LoggerMessage-Delegate für die LogInformation-Nachricht
+    private static readonly Action<ILogger, string, Exception?> _logPrivacyPageAccessed =
+        LoggerMessage.Define<string>(
+            LogLevel.Information,
+            new EventId(0, nameof(OnGet)),
+            "Privacy page accessed: {Message}");
+    public PrivacyModel(ILogger<PrivacyModel> logger)
     {
-        private readonly ILogger<PrivacyModel> _logger;
-
-        public PrivacyModel(ILogger<PrivacyModel> logger)
-        {
-            _logger = logger;
-        }
-
-        public void OnGet()
-        {
-        }
+        _logger = logger;
     }
 
+    public void OnGet()
+    {
+        _logPrivacyPageAccessed(_logger, "started", null);
+    }
 }

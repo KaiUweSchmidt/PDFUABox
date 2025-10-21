@@ -2,7 +2,7 @@ using PDFUAWebApp.Extensions;
 
 namespace PDFUAWebApp;
 
-public class Program
+internal static class Program
 {
     public static void Main(string[] args)
     {
@@ -33,7 +33,9 @@ public class Program
 
         app.MapRazorPages();
 
+#pragma warning disable CA1303 // Literale nicht als lokalisierte Parameter übergeben
         Console.WriteLine("Starting Engine");
+#pragma warning restore CA1303 // Literale nicht als lokalisierte Parameter übergeben
 
         Thread.Sleep(500);
 

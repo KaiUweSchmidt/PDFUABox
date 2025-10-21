@@ -5,9 +5,13 @@
 
   <ItemGroup>
     <PackageReference Include="Aspose.PDF" />
-    <PackageReference Include="Aspose.Words"/>
+    <PackageReference Include="Aspose.Words" />
     <PackageReference Include="Microsoft.Extensions.Configuration" />
     <PackageReference Include="Microsoft.Extensions.Configuration.Json" />
+    <PackageReference Include="SonarAnalyzer.CSharp">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
   </ItemGroup>
   <ItemGroup>
     <InternalsVisibleTo Include="Converter_Test.UnitTest_Converter" />

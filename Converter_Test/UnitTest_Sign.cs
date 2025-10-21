@@ -1,14 +1,15 @@
 using FluentAssertions;
 using Microsoft.Extensions.Configuration;
-namespace Converter_Test;
 
-public class UnitTest_Sign
+namespace Converter.Test;
+
+public class UnitTestSign
 {
     [Theory]
     [InlineData(@"testdata\BFSG für Kommunen.pdf")]
-    public void Test_Signing(string pdfFile)
+    public void TestSigning(string pdfFile)
     {
         pdfFile = Path.GetFullPath(pdfFile);
-        Converter.Sign.SignDocument(pdfFile);
+        Sign.SignDocument(pdfFile);
     }
 }

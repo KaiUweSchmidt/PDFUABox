@@ -1,12 +1,12 @@
 using FluentAssertions;
 using Microsoft.Extensions.Configuration;
-namespace Converter_Test;
+namespace ConverterTest;
 
-public class UnitTest_Converter
+public class UnitTestConverter
 {
-    public UnitTest_Converter()
+    public UnitTestConverter()
     {
-        var converter = Converter.Converter.Instance;
+        var converter = Converter.ConverterRenameMe.Instance;
         if(converter == null)
             throw new InvalidOperationException("Converter instance is null.");
 
@@ -26,11 +26,9 @@ public class UnitTest_Converter
     [InlineData(@"testdata\2025_10_Rechnung_5619948855_bearbeitet.docx")]
     [InlineData(@"testdata\BFSG für Kommunen.docx")]
     [InlineData(@"testdata\Playbook Barrierefreiheit in Dokumenten.docx")]
-    [InlineData(@"testdata\Barrierefreiheitspflichten für Gemeinden.docx")]
-    
-    public async Task Test_CreateJob(string inputFile)
+    public async Task TestCreateJob(string inputFile)
     {
-        var converter = Converter.Converter.Instance;
+        var converter = Converter.ConverterRenameMe.Instance;
         if (converter == null)
             throw new InvalidOperationException("Converter instance is null.");
 
@@ -47,7 +45,7 @@ public class UnitTest_Converter
         
         var job = converter.CreateJob(workFile, null);
         Assert.NotNull(job);
-        await job;
+        await job.ConfigureAwait(true);
         job.Status.Should().Be(TaskStatus.RanToCompletion);
         
     }

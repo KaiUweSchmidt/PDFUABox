@@ -1,12 +1,14 @@
 ﻿namespace Converter;
 
-public class Sign
+public static class Sign
 {
     public static void SignDocument(string fileToSign)
     {
         // The path to the documents directory
+#pragma warning disable S1075 // URIs should not be hardcoded
         string pfxFile= @"C:\Git\PDFUABox\PDFSignContextHandler\pfx\PDFUABoxTestUser.pfx";
-        // Open PDF document
+#pragma warning restore S1075 // URIs should not be hardcoded
+                             // Open PDF document
         using var document = new Aspose.Pdf.Document(fileToSign);
         // Instantiate PdfFileSignature object
         using var signature = new Aspose.Pdf.Facades.PdfFileSignature(document);

@@ -1,6 +1,6 @@
 ﻿namespace PDFUAWebApp.Extensions;
 
-public static class ServiceCollectionExtensions
+internal static class ServiceCollectionExtensions
 {
     public static IServiceCollection AddWatcher(this IServiceCollection services, IConfiguration configuration)
     {

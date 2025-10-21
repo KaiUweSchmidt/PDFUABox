@@ -9,11 +9,11 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.22.1" />
-  </ItemGroup>
-
-  <ItemGroup>
     <ProjectReference Include="..\Converter\Converter.csproj" />
   </ItemGroup>
+
+  <PropertyGroup>
+    <NoWarn>$(NoWarn);CA1812;CA1852</NoWarn>
+  </PropertyGroup>
 
 </Project>
