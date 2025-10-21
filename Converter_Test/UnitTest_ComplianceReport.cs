@@ -1,5 +1,6 @@
 ﻿using Converter;
 using Converter.ComplianceReportModels;
+using FluentAssertions;
 
 namespace ConverterTest;
 
@@ -18,6 +19,7 @@ public class UnitTestComplianceReport
     {
         var complianceReport = ComplianceReportSerializer.Deserialize(complianceReportFile);
         Assert.NotNull(complianceReport);
+        complianceReport!.Name.Should().Be("PDFUA-1 Validation Report");
         //TODO : more tests
     }
 }
