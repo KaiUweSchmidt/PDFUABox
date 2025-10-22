@@ -6,7 +6,7 @@ public static class Sign
     {
         // The path to the documents directory
         
-                             // Open PDF document
+        // Open PDF document
         using var document = new Aspose.Pdf.Document(fileToSign);
         // Instantiate PdfFileSignature object
         using var signature = new Aspose.Pdf.Facades.PdfFileSignature(document);
