@@ -1,13 +1,13 @@
-using PDFUAWebApp.Extensions;
+using PDFUABox.WebApp.Extensions;
 
-namespace PDFUAWebApp;
+namespace PDFUABox.WebApp;
 
 internal static class Program
 {
     public static void Main(string[] args)
     {
         var builder = WebApplication.CreateBuilder(args);
-        builder.Environment.ContentRootPath = @"C:\PDFUABoxFiles";
+        builder.Logging.AddLog4Net();
         Console.WriteLine($"builder.Environment.ContentRootPath: {Path.GetFullPath(builder.Environment.ContentRootPath)}");
         // Add services to the container.
         builder.Services.AddRazorPages();
@@ -23,7 +23,7 @@ internal static class Program
             // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
             app.UseHsts();
         }
-
+        
         app.UseHttpsRedirection();
         app.UseStaticFiles();
         app.UseDeveloperExceptionPage();

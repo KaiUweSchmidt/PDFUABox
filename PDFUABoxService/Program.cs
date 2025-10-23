@@ -9,6 +9,17 @@ Console.WriteLine("Starting Engine");
 var environmentName = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT");
 Console.WriteLine($"Environment: {environmentName}");
 
+using var factory = new WebApplicationFactory<Program>()
+.WithWebHostBuilder(builder =>
+{
+    builder.ConfigureLogging(logging =>
+    {
+        // Add xUnit logger provider
+        logging.Services.AddSingleton<ILoggerProvider>(
+        new XUnitLoggerProvider(_testOutputHelper, appendScope: false));
+    });
+});
+
 var configuration = new ConfigurationBuilder()
     .SetBasePath(Directory.GetCurrentDirectory())
     .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)

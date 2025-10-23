@@ -1,4 +1,4 @@
-﻿namespace Converter;
+﻿namespace PDFUABox.ConverterServices;
 
 public enum JobStatus
 {

@@ -3,18 +3,17 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.14.36414.22
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PDFUABoxService", "PDFUABoxService\PDFUABoxService.csproj", "{59B142A0-9B7B-4340-85A1-DC1BFB4F4662}"
-EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Projektmappenelemente", "Projektmappenelemente", "{84D27F74-D2BA-6C25-2661-968F101900D9}"
 	ProjectSection(SolutionItems) = preProject
+		.editorconfig = .editorconfig
 		Directory.Build.props = Directory.Build.props
 		Directory.Packages.props = Directory.Packages.props
 		Readme.md = Readme.md
 	EndProjectSection
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Converter", "Converter\Converter.csproj", "{2A7ABCD5-E114-4EF3-9A15-8C1D897BB455}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ConverterServices", "Converter\ConverterServices.csproj", "{2A7ABCD5-E114-4EF3-9A15-8C1D897BB455}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Converter.Test", "Converter_Test\Converter.Test.csproj", "{6F2F00A9-5607-4D52-AF6D-95300CE51ACA}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ConverterServices.Test", "Converter_Test\ConverterServices.Test.csproj", "{6F2F00A9-5607-4D52-AF6D-95300CE51ACA}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PDFUAWebApp", "PDFUAWebApp\PDFUAWebApp.csproj", "{A5CF4359-8411-4D1F-A7A4-9E41DB7B73B8}"
 EndProject
@@ -26,10 +25,6 @@ Global
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{59B142A0-9B7B-4340-85A1-DC1BFB4F4662}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{59B142A0-9B7B-4340-85A1-DC1BFB4F4662}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{59B142A0-9B7B-4340-85A1-DC1BFB4F4662}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{59B142A0-9B7B-4340-85A1-DC1BFB4F4662}.Release|Any CPU.Build.0 = Release|Any CPU
 		{2A7ABCD5-E114-4EF3-9A15-8C1D897BB455}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{2A7ABCD5-E114-4EF3-9A15-8C1D897BB455}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{2A7ABCD5-E114-4EF3-9A15-8C1D897BB455}.Release|Any CPU.ActiveCfg = Release|Any CPU

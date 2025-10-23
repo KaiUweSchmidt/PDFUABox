@@ -1,7 +1,7 @@
 using FluentAssertions;
 using Microsoft.Extensions.Configuration;
 
-namespace Converter.Test;
+namespace PDFUABox.ConverterServices.Test;
 
 public class UnitTestSign
 {

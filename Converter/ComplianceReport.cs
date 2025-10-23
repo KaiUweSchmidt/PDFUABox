@@ -23,137 +23,136 @@ using System.Data.SqlTypes;
 using System.Collections.ObjectModel;
 using System.Xml.Serialization;
 
-namespace Converter.ComplianceReportModels
+namespace PDFUABox.ConverterServices.ComplianceReportModels;
+
+[XmlRoot("Compliance", IsNullable = true)]
+public class Compliance
 {
-    [XmlRoot("Compliance", IsNullable = true)]
-    public class Compliance
+    [XmlAttribute("Name")]
+    public string? Name { get; set; }
+
+    [XmlAttribute("Operation")]
+    public string? Operation { get; set; }
+
+    [XmlAttribute("Target")]
+    public string? Target { get; set; }
+
+    [XmlElement("Version")]
+    public string? Version { get; set; }
+
+    [XmlElement("Copyright")]
+    public string? Copyright { get; set; }
+
+    [XmlElement("Date")]
+    public string? Date { get; set; }
+
+    [XmlElement("File")]
+    public FileItem? File { get; set; }
+}
+
+public class FileItem
+{
+    [XmlAttribute("Version")]
+    public string? Version { get; set; }
+
+    [XmlAttribute("Name")]
+    public string? Name { get; set; }
+
+    [XmlAttribute("Pages")]
+    public string? Pages { get; set; }
+
+    [XmlElement("Security")]
+    public Category? Security { get; set; }
+
+    [XmlElement("General")]
+    public Category? General { get; set; }
+
+    [XmlElement("Text")]
+    public Category? Text { get; set; }
+
+    [XmlElement("Fonts")]
+    public Category? Fonts { get; set; }
+
+    [XmlElement("Graphics")]
+    public Category? Graphics { get; set; }
+
+    [XmlElement("Headings")]
+    public Category? Headings { get; set; }
+
+    [XmlElement("Tables")]
+    public Category? Tables { get; set; }
+
+    [XmlElement("Lists")]
+    public Category? Lists { get; set; }
+
+    [XmlElement("NotesAndReferences")]
+    public Category? NotesAndReferences { get; set; }
+
+    [XmlElement("OptionalContent")]
+    public Category? OptionalContent { get; set; }
+
+    [XmlElement("EmbeddedFiles")]
+    public Category? EmbeddedFiles { get; set; }
+
+    [XmlElement("DigitalSignatures")]
+    public Category? DigitalSignatures { get; set; }
+
+    [XmlElement("NonInteractiveForms")]
+    public Category? NonInteractiveForms { get; set; }
+
+    [XmlElement("XFA")]
+    public Category? XFA { get; set; }
+
+    [XmlElement("Navigation")]
+    public Category? Navigation { get; set; }
+
+    [XmlElement("Annotations")]
+    public Category? Annotations { get; set; }
+
+    [XmlElement("Actions")]
+    public Category? Actions { get; set; }
+
+    [XmlElement("XObjects")]
+    public Category? XObjects { get; set; }
+
+    [XmlElement("VersionIdentification")]
+    public string? VersionIdentification { get; set; }
+}
+
+// C#
+public class Category
+{
+    // direkte Problem-Elemente
+    [XmlElement("Problem")]
+    public Collection<Problem> ProblemItems { get; } = new();
+
+    public IEnumerable<Problem> AllProblems()
     {
-        [XmlAttribute("Name")]
-        public string? Name { get; set; }
-
-        [XmlAttribute("Operation")]
-        public string? Operation { get; set; }
-
-        [XmlAttribute("Target")]
-        public string? Target { get; set; }
-
-        [XmlElement("Version")]
-        public string? Version { get; set; }
-
-        [XmlElement("Copyright")]
-        public string? Copyright { get; set; }
-
-        [XmlElement("Date")]
-        public string? Date { get; set; }
-
-        [XmlElement("File")]
-        public FileItem? File { get; set; }
+        foreach (var p in ProblemItems) yield return p;
     }
-
-    public class FileItem
-    {
-        [XmlAttribute("Version")]
-        public string? Version { get; set; }
-
-        [XmlAttribute("Name")]
-        public string? Name { get; set; }
-
-        [XmlAttribute("Pages")]
-        public string? Pages { get; set; }
-
-        [XmlElement("Security")]
-        public Category? Security { get; set; }
-
-        [XmlElement("General")]
-        public Category? General { get; set; }
-
-        [XmlElement("Text")]
-        public Category? Text { get; set; }
-
-        [XmlElement("Fonts")]
-        public Category? Fonts { get; set; }
-
-        [XmlElement("Graphics")]
-        public Category? Graphics { get; set; }
-
-        [XmlElement("Headings")]
-        public Category? Headings { get; set; }
-
-        [XmlElement("Tables")]
-        public Category? Tables { get; set; }
-
-        [XmlElement("Lists")]
-        public Category? Lists { get; set; }
-
-        [XmlElement("NotesAndReferences")]
-        public Category? NotesAndReferences { get; set; }
-
-        [XmlElement("OptionalContent")]
-        public Category? OptionalContent { get; set; }
-
-        [XmlElement("EmbeddedFiles")]
-        public Category? EmbeddedFiles { get; set; }
-
-        [XmlElement("DigitalSignatures")]
-        public Category? DigitalSignatures { get; set; }
-
-        [XmlElement("NonInteractiveForms")]
-        public Category? NonInteractiveForms { get; set; }
-
-        [XmlElement("XFA")]
-        public Category? XFA { get; set; }
-
-        [XmlElement("Navigation")]
-        public Category? Navigation { get; set; }
-
-        [XmlElement("Annotations")]
-        public Category? Annotations { get; set; }
-
-        [XmlElement("Actions")]
-        public Category? Actions { get; set; }
-
-        [XmlElement("XObjects")]
-        public Category? XObjects { get; set; }
-
-        [XmlElement("VersionIdentification")]
-        public string? VersionIdentification { get; set; }
-    }
-
-    // C#
-    public class Category
-    {
-        // direkte Problem-Elemente
-        [XmlElement("Problem")]
-        public Collection<Problem> ProblemItems { get; } = new();
-
-        public IEnumerable<Problem> AllProblems()
-        {
-            foreach (var p in ProblemItems) yield return p;
-        }
-    }
+}
 
 
-    public class Problem
-    {
-        [XmlAttribute("Severity")]
-        public string? Severity { get; set; }
+public class Problem
+{
+    [XmlAttribute("Severity")]
+    public string? Severity { get; set; }
 
-        [XmlAttribute("Clause")]
-        public string? Clause { get; set; }
+    [XmlAttribute("Clause")]
+    public string? Clause { get; set; }
 
-        [XmlAttribute("ObjectID")]
-        public string? ObjectID { get; set; }
+    [XmlAttribute("ObjectID")]
+    public string? ObjectID { get; set; }
 
-        [XmlAttribute("Page")]
-        public string? Page { get; set; }
+    [XmlAttribute("Page")]
+    public string? Page { get; set; }
 
-        [XmlAttribute("Convertable")]
-        public string? Convertable { get; set; }
+    [XmlAttribute("Convertable")]
+    public string? Convertable { get; set; }
 
-        [XmlAttribute("Code")]
-        public string? Code { get; set; }
+    [XmlAttribute("Code")]
+    public string? Code { get; set; }
 
-        [XmlText]
-        public string? Description { get; set; }
-    }
+    [XmlText]
+    public string? Description { get; set; }
 }

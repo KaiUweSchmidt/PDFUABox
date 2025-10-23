@@ -1,8 +1,9 @@
 ﻿using System.Text;
 using System.Xml;
 using System.Xml.Serialization;
+using PDFUABox.ConverterServices;
 
-namespace Converter.ComplianceReportModels;
+namespace PDFUABox.ConverterServices.ComplianceReportModels;
 
 public static class ComplianceReportSerializer
 {
