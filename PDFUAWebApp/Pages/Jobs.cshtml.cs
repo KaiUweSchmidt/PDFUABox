@@ -1,8 +1,8 @@
-using Converter;
+using PDFUABox.ConverterServices;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 
-namespace PDFUAWebApp.Pages;
+namespace PDFUABox.WebApp.Pages;
 
 internal sealed class JobsModel : PageModel
 {

@@ -11,16 +11,18 @@
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
     <PackageReference Include="FluentAssertions" />
+    <PackageReference Include="MartinCostello.Logging.XUnit.v3" />
     <PackageReference Include="Microsoft.NET.Test.Sdk" />
-    <PackageReference Include="xunit" />
     <PackageReference Include="xunit.runner.visualstudio">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
+    <PackageReference Include="xunit.v3" />
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Converter\Converter.csproj" />
+    <ProjectReference Include="..\Converter\ConverterServices.csproj" />
+    <ProjectReference Include="..\PDFUAWebApp\PDFUAWebApp.csproj" />
   </ItemGroup>
 
   <ItemGroup>

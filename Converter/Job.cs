@@ -1,12 +1,14 @@
 ﻿using System.Runtime.InteropServices;
 using Aspose.Pdf;
 using Aspose.Words.Fields;
-using Converter.ComplianceReportModels;
+using log4net;
+using PDFUABox.ConverterServices.ComplianceReportModels;
 
-namespace Converter;
+namespace PDFUABox.ConverterServices;
 
 public class Job : IDisposable
 {
+    private readonly ILog _logger = LogManager.GetLogger(typeof(Job));
     public string Name { get; set; } = string.Empty;
     public string InputFile { get; set; }
     public string TargetDirectory { get; set; }
@@ -24,6 +26,9 @@ public class Job : IDisposable
         if (string.IsNullOrWhiteSpace(inputFile)) throw new ArgumentException("InputFile is null or empty.", nameof(inputFile));
         if (string.IsNullOrWhiteSpace(targetDirectory)) throw new ArgumentException("TargetDirectory is null or empty.", nameof(targetDirectory));
         if (saveOptions == null) throw new ArgumentNullException(nameof(saveOptions), "SaveOptions is null.");
+
+        _logger.Debug($"Job created with name: {name}, inputFile: {inputFile}, targetDirectory: {targetDirectory}");
+
         Name = name;
         InputFile = inputFile;
         TargetDirectory = targetDirectory;
@@ -35,8 +40,12 @@ public class Job : IDisposable
 
     public void Run()
     {
+        if (OutputStream == null)
+            throw new InvalidOperationException("OutputStream is null.");
+        if (SaveOptions == null)
+            throw new InvalidOperationException("SaveOptions is null.");
+        _logger.Info($"Job {Name} started.");
         Status = JobStatus.InProgress;
-
         Aspose.Words.Document doc = new Aspose.Words.Document(InputFile);
         foreach (Field field in doc.Range.Fields)
         {
@@ -48,29 +57,28 @@ public class Job : IDisposable
                     continue;
                 if(hyperlink.ScreenTip == null)
                 {
-                    hyperlink.ScreenTip = "Test";
+                    hyperlink.ScreenTip = hyperlink.DisplayResult;
                 }
                 
             }
         }
 
-
         doc.Save(OutputStream, SaveOptions);
 
         string validatedFile = Path.Combine(TargetDirectory!, Path.GetFileNameWithoutExtension(InputFile) + "_validated.xml");
-        if(OutputStream == null)
-            throw new InvalidOperationException("OutputStream is null.");
-        if(SaveOptions == null)
-            throw new InvalidOperationException("SaveOptions is null.");
         
         using var pdfDocument = new Aspose.Pdf.Document(OutputStream);
         ResultFile = Path.Combine(TargetDirectory!, Path.GetFileNameWithoutExtension(InputFile) + ".pdf");
 
         pdfDocument.Save(ResultFile);
 
-        SetDocumentPrivileges(ResultFile);
-        
-        
+
+
+#pragma warning disable S125,S1135 // Sections of code should not be commented out
+        //TODO: we need a aspose license to enable encryption
+        //SetDocumentPrivileges(ResultFile);
+#pragma warning restore S125,S1135 // Sections of code should not be commented out
+
         var isPDFUA = pdfDocument.Validate(validatedFile, PdfFormat.PDF_UA_1);
         if (!isPDFUA)
         {
@@ -94,7 +102,9 @@ public class Job : IDisposable
         ResetOutputStream();
     }
 
+#pragma warning disable S1144 // Unused private types or members should be removed
     private static void SetDocumentPrivileges(string pdfFileName)
+#pragma warning restore S1144 // Unused private types or members should be removed
     {
         if (string.IsNullOrEmpty(pdfFileName))
             throw new ArgumentNullException(nameof(pdfFileName), "pdfFileName is null or empty.");
@@ -105,7 +115,7 @@ public class Job : IDisposable
 
 
         using var fileSecurity = new Aspose.Pdf.Facades.PdfFileSecurity();
-
+        
         pdfFileName = Path.Combine(pdfFilePath, "Encrypt Test.pdf");
         fileSecurity.BindPdf(pdfFileName);
 

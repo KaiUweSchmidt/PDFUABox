@@ -6,7 +6,7 @@
 // Entferne die private IConfiguration _configuration; Zeile komplett
 // Passe den Konstruktor an, indem die Konfiguration nur lokal verwendet wird
 
-namespace Converter;
+namespace PDFUABox.ConverterServices;
 
 public class Watcher : IDisposable
 {

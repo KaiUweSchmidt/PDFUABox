@@ -9,11 +9,20 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Converter\Converter.csproj" />
+    <ProjectReference Include="..\Converter\ConverterServices.csproj" />
   </ItemGroup>
 
   <PropertyGroup>
     <NoWarn>$(NoWarn);CA1812;CA1852</NoWarn>
   </PropertyGroup>
+
+  <ItemGroup>
+    <InternalsVisibleTo Include="Converter_Test.UnitTest_Converter" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="log4net" />
+    <PackageReference Include="Microsoft.Extensions.Logging.Log4Net.AspNetCore" />
+  </ItemGroup>
 
 </Project>

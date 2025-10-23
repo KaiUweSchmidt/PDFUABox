@@ -6,6 +6,7 @@
   <ItemGroup>
     <PackageReference Include="Aspose.PDF" />
     <PackageReference Include="Aspose.Words" />
+    <PackageReference Include="log4net" />
     <PackageReference Include="Microsoft.Extensions.Configuration" />
     <PackageReference Include="Microsoft.Extensions.Configuration.Json" />
     <PackageReference Include="SkiaSharp.NativeAssets.Linux" />

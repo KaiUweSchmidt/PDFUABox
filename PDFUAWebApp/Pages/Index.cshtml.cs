@@ -1,13 +1,13 @@
-using Converter;
+using PDFUABox.ConverterServices;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 
-namespace PDFUAWebApp.Pages;
+namespace PDFUABox.WebApp.Pages;
 
 internal sealed class IndexModel : PageModel
 {
     private readonly ILogger<IndexModel> _logger;
-    private Converter.Watcher _watcher;
+    private Watcher _watcher;
 
     // LoggerMessage-Delegate für die LogInformation-Nachricht
     private static readonly Action<ILogger, string, Exception?> _logIndexPageAccessed =
@@ -16,7 +16,7 @@ internal sealed class IndexModel : PageModel
             new EventId(0, nameof(OnGet)),
             "Index page accessed: {Message}");
 
-    public IndexModel(ILogger<IndexModel> logger, Converter.Watcher watcher)
+    public IndexModel(ILogger<IndexModel> logger, Watcher watcher)
     {
         _logger = logger;
         _watcher = watcher;

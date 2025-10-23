@@ -1,5 +1,5 @@
-﻿using Converter;
-using Converter.ComplianceReportModels;
+﻿using PDFUABox.ConverterServices;
+using PDFUABox.ConverterServices.ComplianceReportModels;
 using FluentAssertions;
 
 namespace ConverterTest;

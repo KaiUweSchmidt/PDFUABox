@@ -1,8 +1,8 @@
-using Converter;
+using PDFUABox.ConverterServices;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.Extensions.Logging;
 
-namespace PDFUAWebApp.Pages;
+namespace PDFUABox.WebApp.Pages;
 
 internal partial class ConverterModel : PageModel
 {

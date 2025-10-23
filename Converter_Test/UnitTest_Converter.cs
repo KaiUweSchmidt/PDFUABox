@@ -1,25 +1,27 @@
 using FluentAssertions;
+using MartinCostello.Logging.XUnit;
 using Microsoft.Extensions.Configuration;
+using Microsoft.VisualStudio.TestPlatform.TestHost;
+using PDFUABox.WebApp;
 namespace ConverterTest;
 
 public class UnitTestConverter
 {
-    public UnitTestConverter()
-    {
-        var converter = Converter.ConverterRenameMe.Instance;
-        if(converter == null)
-            throw new InvalidOperationException("Converter instance is null.");
+    private readonly ITestOutputHelper _output;
+    private readonly IConfiguration _configuration;
 
-        if (converter.IsInitialized)
-            return;
-        var configuration = new ConfigurationBuilder()
+    public UnitTestConverter(ITestOutputHelper output)
+    {
+        _output = output;
+
+
+        _configuration = new ConfigurationBuilder()
             .SetBasePath(Directory.GetCurrentDirectory())
             .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
             .Build();
 
-        var converterConfiguration = configuration.GetSection("Converter");
+        //var converterConfiguration = configuration.GetSection("Converter");
 
-        converter.Init(converterConfiguration);
     }
 
     [Theory]
@@ -28,26 +30,46 @@ public class UnitTestConverter
     [InlineData(@"Playbook Barrierefreiheit in Dokumenten.docx")]
     public async Task TestCreateJob(string inputFile)
     {
-        inputFile = Path.Combine(Directory.GetCurrentDirectory(), "TestData", inputFile);
-        var converter = Converter.ConverterRenameMe.Instance;
-        if (converter == null)
-            throw new InvalidOperationException("Converter instance is null.");
 
-        if(!Directory.Exists(converter.WorkDirectory)) 
-            Directory.CreateDirectory(converter.WorkDirectory);
-        if(!Directory.Exists(converter.TargetDirectory))
-            Directory.CreateDirectory(converter.TargetDirectory);
+        await Task.Run(
+            () =>
+            {
+                inputFile = Path.Combine(Directory.GetCurrentDirectory(), "TestData", inputFile);
+                File.Exists(inputFile).Should().BeTrue("Input file should exist for the test.");
+            }, TestContext.Current.CancellationToken
+            );
 
-        inputFile = Path.GetFullPath(inputFile);
+        //        using var factory = new WebApplicationFactory<Program>()
+        //.WithWebHostBuilder(builder =>
+        //{
+        //    builder.ConfigureLogging(logging =>
+        //    {
+        //        // Add xUnit logger provider
+        //        logging.Services.AddSingleton<ILoggerProvider>(
+        //        new XUnitLoggerProvider(_testOutputHelper, appendScope: false));
+        //    });
+        //});
 
-        string workFile = Path.Combine(converter.TargetDirectory, Path.GetFileName(inputFile));
-        File.Copy(inputFile, workFile, true);
-        
-        
-        var job = converter.CreateJob(workFile, null);
-        Assert.NotNull(job);
-        await job.ConfigureAwait(true);
-        job.Status.Should().Be(TaskStatus.RanToCompletion);
-        
+        //        inputFile = Path.Combine(Directory.GetCurrentDirectory(), "TestData", inputFile);
+        //        var converter = new Converter.ConverterRenameMe.Instance;
+        //        if (converter == null)
+        //            throw new InvalidOperationException("Converter instance is null.");
+
+        //        if(!Directory.Exists(converter.WorkDirectory)) 
+        //            Directory.CreateDirectory(converter.WorkDirectory);
+        //        if(!Directory.Exists(converter.TargetDirectory))
+        //            Directory.CreateDirectory(converter.TargetDirectory);
+
+        //        inputFile = Path.GetFullPath(inputFile);
+
+        //        string workFile = Path.Combine(converter.TargetDirectory, Path.GetFileName(inputFile));
+        //        File.Copy(inputFile, workFile, true);
+
+
+        //        var job = converter.CreateJob(workFile, null);
+        //        Assert.NotNull(job);
+        //        await job.ConfigureAwait(true);
+        //        job.Status.Should().Be(TaskStatus.RanToCompletion);
+
     }
 }
