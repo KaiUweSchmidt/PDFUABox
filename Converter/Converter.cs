@@ -12,15 +12,19 @@ public class Converter
     {
         ArgumentNullException.ThrowIfNull(configuration);
 
-        this._workDirectory = configuration["PDFUABOX_WORK"] ??
+        var converterConfiguration = configuration.GetSection("Converter");
+
+        this._workDirectory = converterConfiguration["PDFUABOX_WORK"] ??
             throw new ArgumentException("No configuration for work directory ", nameof(configuration));
         if (string.IsNullOrWhiteSpace(_workDirectory))
             throw new ArgumentException("Work directory is null oder leer.", nameof(configuration));
 
-        this._targetDirectory = configuration["PDFUABOX_TARGET"] ??
+        this._targetDirectory = converterConfiguration["PDFUABOX_TARGET"] ??
             throw new ArgumentException("No configuration for target directory ", nameof(configuration));
         if (string.IsNullOrWhiteSpace(_targetDirectory))
             throw new ArgumentException("Target directory is null oder leer.", nameof(configuration));
+
+        _logger.Debug($"Converter created with WorkDirectory: {_workDirectory}, TargetDirectory: {_targetDirectory}");
     }
 
 
