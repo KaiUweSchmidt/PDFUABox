@@ -36,8 +36,6 @@ public class Job : IDisposable
         SaveOptions = saveOptions;
     }
 
-
-
     public void Run()
     {
         if (OutputStream == null)
@@ -127,7 +125,6 @@ public class Job : IDisposable
 
         fileSecurity.Save(encryptedFileName);
     }
-
 
     private void ResetOutputStream()
     {
