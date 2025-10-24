@@ -1,4 +1,8 @@
 using PDFUABox.WebApp.Extensions;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
+using PDFUABox.WebApp.Data;
+using PDFUABox.WebApp.Areas.Identity.Data;
 
 namespace PDFUABox.WebApp;
 
@@ -7,6 +11,11 @@ internal static class Program
     public static void Main(string[] args)
     {
         var builder = WebApplication.CreateBuilder(args);
+        var connectionString = builder.Configuration.GetConnectionString("ApplicationAppContextConnection") ?? throw new InvalidOperationException("Connection string 'ApplicationAppContextConnection' not found.");
+
+        builder.Services.AddDbContext<ApplicationAppContext>(options => options.UseSqlServer(connectionString));
+
+        builder.Services.AddDefaultIdentity<PDFUABoxUser>(options => options.SignIn.RequireConfirmedAccount = true).AddEntityFrameworkStores<ApplicationAppContext>();
         builder.Logging.AddLog4Net();
         Console.WriteLine($"builder.Environment.ContentRootPath: {Path.GetFullPath(builder.Environment.ContentRootPath)}");
         // Add services to the container.
@@ -33,9 +42,9 @@ internal static class Program
 
         app.MapRazorPages();
 
-#pragma warning disable CA1303 // Literale nicht als lokalisierte Parameter übergeben
+#pragma warning disable CA1303 // Literale nicht als lokalisierte Parameter ï¿½bergeben
         Console.WriteLine("Starting Engine");
-#pragma warning restore CA1303 // Literale nicht als lokalisierte Parameter übergeben
+#pragma warning restore CA1303 // Literale nicht als lokalisierte Parameter ï¿½bergeben
 
         Thread.Sleep(500);
 

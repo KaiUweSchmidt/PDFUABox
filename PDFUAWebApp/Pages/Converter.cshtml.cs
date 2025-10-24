@@ -1,9 +1,11 @@
-using PDFUABox.ConverterServices;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc.RazorPages;
-using Microsoft.Extensions.Logging;
+using PDFUABox.ConverterServices;
 
 namespace PDFUABox.WebApp.Pages;
 
+
+[Authorize]
 internal partial class ConverterModel : PageModel
 {
     private readonly ILogger<IndexModel> _logger;
