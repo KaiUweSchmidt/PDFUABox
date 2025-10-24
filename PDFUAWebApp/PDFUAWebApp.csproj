@@ -2,6 +2,9 @@
 
   <PropertyGroup>
     <UserSecretsId>cd74f950-6a06-4afa-abf1-30721927ce24</UserSecretsId>
+    <RootNamespace>PDFUABox.WebApp</RootNamespace>
+    <TreatWarningsAsErrors>false</TreatWarningsAsErrors>
+    <CodeAnalysisTreatWarningsAsErrors>false</CodeAnalysisTreatWarningsAsErrors>
   </PropertyGroup>
 
   <ItemGroup>
@@ -13,7 +16,7 @@
   </ItemGroup>
 
   <PropertyGroup>
-    <NoWarn>$(NoWarn);CA1812;CA1852</NoWarn>
+    <NoWarn>$(NoWarn);CA1812;CA1852;CA1515</NoWarn>
   </PropertyGroup>
 
   <ItemGroup>
@@ -22,7 +25,19 @@
 
   <ItemGroup>
     <PackageReference Include="log4net" />
+    <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" />
+    <PackageReference Include="Microsoft.AspNetCore.Identity.UI" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Design">
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+      <PrivateAssets>all</PrivateAssets>
+    </PackageReference>
+    <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Tools">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
     <PackageReference Include="Microsoft.Extensions.Logging.Log4Net.AspNetCore" />
+    <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" />
   </ItemGroup>
 
 </Project>
