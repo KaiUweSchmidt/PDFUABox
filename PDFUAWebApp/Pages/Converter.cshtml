@@ -5,6 +5,7 @@
 }
 
 <h1>Converter</h1>
-<h2 class="">Configuration</h2>
-<p>watcher source directory: @Model.Watcher.SourceDirectory </p>
-<h3>Queue</h3>
+<form method="post" enctype="multipart/form-data">
+    <input type="file" asp-for="Upload" />
+    <input type="submit" />
+</form>

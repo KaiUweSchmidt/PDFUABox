@@ -19,20 +19,20 @@ public class Converter
         if (string.IsNullOrWhiteSpace(_workDirectory))
             throw new ArgumentException("Work directory is null oder leer.", nameof(configuration));
 
-        this._targetDirectory = converterConfiguration["PDFUABOX_TARGET"] ??
-            throw new ArgumentException("No configuration for target directory ", nameof(configuration));
-        if (string.IsNullOrWhiteSpace(_targetDirectory))
+        this._destinationDirectory = converterConfiguration["PDFUABOX_DEST"] ??
+            throw new ArgumentException("No configuration for destination directory ", nameof(configuration));
+        if (string.IsNullOrWhiteSpace(_destinationDirectory))
             throw new ArgumentException("Target directory is null oder leer.", nameof(configuration));
 
-        _logger.Debug($"Converter created with WorkDirectory: {_workDirectory}, TargetDirectory: {_targetDirectory}");
+        _logger.Debug($"Converter created with WorkDirectory: {_workDirectory}, TargetDirectory: {_destinationDirectory}");
     }
 
 
     public string WorkDirectory { get => _workDirectory; }
-    public string TargetDirectory { get => _targetDirectory; }
+    public string TargetDirectory { get => _destinationDirectory; }
 
     private readonly string _workDirectory;
-    private readonly string _targetDirectory;
+    private readonly string _destinationDirectory;
 
     /// <summary>
     /// Create a conversion job
@@ -52,7 +52,7 @@ public class Converter
         return Task.Run(() =>
         {
             Job job = new(Path.GetFileNameWithoutExtension(inputFile),
-                workFile, _targetDirectory, saveOptions ?? CreateDefaultSaveOptions());
+                workFile, _destinationDirectory, saveOptions ?? CreateDefaultSaveOptions());
             try
             {
                 job.Run();

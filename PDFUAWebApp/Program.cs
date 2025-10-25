@@ -22,7 +22,8 @@ internal static class Program
         builder.Services.AddRazorPages();
         
         builder.Services.AddWatcher(builder.Configuration.GetSection("Converter"));
-        
+        builder.Services.AddConverter(builder.Configuration);
+
         var app = builder.Build();
         
         // Configure the HTTP request pipeline.
