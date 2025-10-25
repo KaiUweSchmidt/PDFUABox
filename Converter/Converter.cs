@@ -1,4 +1,5 @@
 ﻿using Aspose.Words.Saving;
+using ConverterServices;
 using log4net;
 using Microsoft.Extensions.Configuration;
 
@@ -7,6 +8,8 @@ namespace PDFUABox.ConverterServices;
 public class Converter
 {
     private readonly ILog _logger = LogManager.GetLogger(typeof(Converter));
+
+    private readonly JobPool _jobPool;
 
     public Converter(IConfiguration configuration)
     {
@@ -23,6 +26,8 @@ public class Converter
             throw new ArgumentException("No configuration for destination directory ", nameof(configuration));
         if (string.IsNullOrWhiteSpace(_destinationDirectory))
             throw new ArgumentException("Target directory is null oder leer.", nameof(configuration));
+
+        _jobPool = new JobPool();
 
         _logger.Debug($"Converter created with WorkDirectory: {_workDirectory}, TargetDirectory: {_destinationDirectory}");
     }
@@ -41,7 +46,7 @@ public class Converter
     /// <param name="saveOptions"></param>
     /// <returns></returns>
     /// <exception cref="InvalidOperationException"></exception>
-    public Task<Job> CreateJob(string inputFile, Aspose.Words.Saving.PdfSaveOptions? saveOptions = null)
+    public Task<Guid> CreateJob(string userId, string inputFile, Aspose.Words.Saving.PdfSaveOptions? saveOptions = null)
     {
 
         _logger.Debug($"CreateJob with inputfile: {inputFile}");
@@ -49,21 +54,26 @@ public class Converter
         string workFile = Path.Combine(_workDirectory!, Path.GetFileName(inputFile));
         File.Copy(inputFile, workFile, true);
 
-        return Task.Run(() =>
+        using Job job = new(userId,
+                            workFile,
+                            _destinationDirectory,
+                            saveOptions ?? CreateDefaultSaveOptions());
+        _jobPool.AddJob(job);
+        return Task.FromResult(job.Id);
+    }
+
+    public async Task<JobStatus> GetJobStatusAsync(string jobId)
+    {
+        if (!string.IsNullOrEmpty(jobId))
+            throw new ArgumentNullException(nameof(jobId));
+
+        return await Task.Run(() =>
         {
-            Job job = new(Path.GetFileNameWithoutExtension(inputFile),
-                workFile, _destinationDirectory, saveOptions ?? CreateDefaultSaveOptions());
-            try
-            {
-                job.Run();
-                return job;
-            }
-            catch
-            {
-                job.Dispose();
-                throw;
-            }
-        });
+            var job = _jobPool.Jobs.Find(j => j.Id.ToString() == jobId);
+            if(job == null)
+                throw new InvalidOperationException($"Job with Id {jobId} not found.");
+            return Task.FromResult(job.Status);
+        }).ConfigureAwait(false);
     }
 
     private static Aspose.Words.Saving.PdfSaveOptions CreateDefaultSaveOptions()
@@ -83,4 +93,7 @@ public class Converter
         return saveOptions;
     }
 
+    public IList<Job> GetAllJobs(string userId) {
+        return _jobPool.Jobs.Where(j => j.UserId == userId).ToList();
+    }
 }

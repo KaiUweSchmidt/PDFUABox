@@ -36,8 +36,10 @@ public class UnitTestConverter
             Directory.CreateDirectory(converter.TargetDirectory);
 
         inputFile = Path.GetFullPath(inputFile);
+        //TODO: get real user id
+        string userId = "TODO_GetPrincipal";
 
-        var job = converter.CreateJob(inputFile, null);
+        var job = converter.CreateJob(userId, inputFile, null);
         Assert.NotNull(job);
         await job.ConfigureAwait(true);
         job.Status.Should().Be(TaskStatus.RanToCompletion);

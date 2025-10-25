@@ -9,7 +9,9 @@ namespace PDFUABox.ConverterServices;
 public class Job : IDisposable
 {
     private readonly ILog _logger = LogManager.GetLogger(typeof(Job));
-    public string Name { get; set; } = string.Empty;
+    public Guid Id { get; set; } = Guid.NewGuid();
+
+    public string UserId { get; } = string.Empty;
     public string InputFile { get; set; }
     public string TargetDirectory { get; set; }
     
@@ -18,18 +20,19 @@ public class Job : IDisposable
     public Stream OutputStream { get; set; }
     Aspose.Words.Saving.PdfSaveOptions SaveOptions { get; set; }
 
-    JobStatus Status { get; set; } = JobStatus.Pending;
+    public JobStatus Status { get; set; } = JobStatus.Pending;
 
-    public Job(string name, string inputFile, string targetDirectory, Aspose.Words.Saving.PdfSaveOptions saveOptions)
+    public Job(string userId, string inputFile, string targetDirectory, Aspose.Words.Saving.PdfSaveOptions saveOptions)
     {
-        if (string.IsNullOrWhiteSpace(name)) throw new ArgumentException("Name is null or empty.", nameof(name));
+        if (string.IsNullOrWhiteSpace(userId)) throw new ArgumentException("userId is null or empty.", nameof(userId));
         if (string.IsNullOrWhiteSpace(inputFile)) throw new ArgumentException("InputFile is null or empty.", nameof(inputFile));
         if (string.IsNullOrWhiteSpace(targetDirectory)) throw new ArgumentException("TargetDirectory is null or empty.", nameof(targetDirectory));
         if (saveOptions == null) throw new ArgumentNullException(nameof(saveOptions), "SaveOptions is null.");
 
-        _logger.Debug($"Job created with name: {name}, inputFile: {inputFile}, targetDirectory: {targetDirectory}");
+        _logger.Debug($"Job created for userId: {userId}, inputFile: {inputFile}, targetDirectory: {targetDirectory}");
 
-        Name = name;
+        Id = Guid.NewGuid();
+        UserId = userId;
         InputFile = inputFile;
         TargetDirectory = targetDirectory;
         OutputStream = new MemoryStream();
@@ -42,7 +45,7 @@ public class Job : IDisposable
             throw new InvalidOperationException("OutputStream is null.");
         if (SaveOptions == null)
             throw new InvalidOperationException("SaveOptions is null.");
-        _logger.Info($"Job {Name} started.");
+        _logger.Info($"Job for UserId {UserId} and Filename {Path.GetFileName(InputFile)} started.");
         Status = JobStatus.InProgress;
         Aspose.Words.Document doc = new Aspose.Words.Document(InputFile);
         foreach (Field field in doc.Range.Fields)

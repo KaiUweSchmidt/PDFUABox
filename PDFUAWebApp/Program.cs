@@ -1,8 +1,9 @@
-using PDFUABox.WebApp.Extensions;
+using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
-using PDFUABox.WebApp.Data;
 using PDFUABox.WebApp.Areas.Identity.Data;
+using PDFUABox.WebApp.Data;
+using PDFUABox.WebApp.Extensions;
 
 namespace PDFUABox.WebApp;
 
@@ -18,6 +19,8 @@ internal static class Program
         builder.Services.AddDefaultIdentity<PDFUABoxUser>(options => options.SignIn.RequireConfirmedAccount = true)
             .AddRoles<IdentityRole>()
             .AddEntityFrameworkStores<ApplicationAppContext>();
+
+
         builder.Logging.AddLog4Net();
         Console.WriteLine($"builder.Environment.ContentRootPath: {Path.GetFullPath(builder.Environment.ContentRootPath)}");
         // Add services to the container.
@@ -25,7 +28,11 @@ internal static class Program
         
         builder.Services.AddWatcher(builder.Configuration.GetSection("Converter"));
         builder.Services.AddConverter(builder.Configuration);
-        
+
+    //    builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
+    //.AddCookie();
+
+    //    builder.Services.AddAuthorization();
 
         var app = builder.Build();
         
@@ -39,11 +46,15 @@ internal static class Program
 
         app.Services.AddIdentitySeed();
 
+        app.UseAuthentication();
+        app.UseAuthorization();
+
         app.UseHttpsRedirection();
         app.UseStaticFiles();
         app.UseDeveloperExceptionPage();
         app.UseRouting();
 
+        app.UseAuthentication();
         app.UseAuthorization();
 
         app.MapRazorPages();

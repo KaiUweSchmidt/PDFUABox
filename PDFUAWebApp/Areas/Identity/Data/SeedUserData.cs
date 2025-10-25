@@ -20,10 +20,8 @@ public static class SeedUserData
         EnsureRoleExists(context, adminRoleName);
         EnsureUserExists(context, adminUserName, "Admin123@PDFUABox");
 
-        var user = context.Users.FirstOrDefault(u => u.UserName == adminUserName);
-
-
-        var role = context.Roles.FirstOrDefault(r => r.Name == adminRoleName);
+        var user = context.Users.FirstOrDefault(u => u.UserName == adminUserName)!;
+        var role = context.Roles.FirstOrDefault(r => r.Name == adminRoleName)!;
 
         if (!context.UserRoles.Any(ur => ur.UserId == user.Id && ur.RoleId == role.Id))
         {
@@ -38,7 +36,7 @@ public static class SeedUserData
             context.UserRoles.Add(userRole);
         }
 
-        await context.SaveChangesAsync();
+        await context.SaveChangesAsync().ConfigureAwait(false);
 
     }
 
@@ -74,8 +72,8 @@ public static class SeedUserData
             var hashed = password.HashPassword(adminUser, adminUserPassword);
             adminUser.PasswordHash = hashed;
 
-            var userStore = new UserStore<PDFUABoxUser>(context);
-            await userStore.CreateAsync(adminUser);
+            using var userStore = new UserStore<PDFUABoxUser>(context);
+            await userStore.CreateAsync(adminUser).ConfigureAwait(false);
         }
     }
 }

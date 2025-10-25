@@ -1,10 +1,14 @@
 ﻿@page
+@using Microsoft.AspNetCore.Identity
+@using PDFUABox.WebApp.Areas.Identity.Data
 @model PDFUABox.WebApp.Pages.ConverterModel
 @{
     ViewData["Title"] = "Converter";
 }
+@inject UserManager<PDFUABoxUser> UserManager
 
 <h1>Converter</h1>
+<p>@UserManager.GetUserName(User)!</p>
 <form method="post" enctype="multipart/form-data">
     <input type="file" asp-for="Upload" />
     <input type="submit" />
