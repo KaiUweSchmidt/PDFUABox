@@ -4,5 +4,25 @@
     ViewData["Title"] = "Running Jobs";
 }
 
-<h1>TODO</h1>
-<p>here goes the cool stuff</p>
+<h1>Jobs</h1>
+<table class="table">
+    <thead>
+        <tr>
+            <th>ID</th>
+            <th>InputFile</th>
+            <th>Status</th>
+        </tr>
+    </thead>
+
+    <tbody>
+        @foreach (var job in Model.Jobs)
+        {
+            <tr>
+                <td>@job.Id</td>
+                <td>@job.InputFile</td>
+                <td>@job.Status</td>
+            </tr>
+        }
+    </tbody>
+</table>
+
