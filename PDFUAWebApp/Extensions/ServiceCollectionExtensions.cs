@@ -1,4 +1,5 @@
 ﻿using PDFUABox.ConverterServices;
+using PDFUABox.WebApp.Areas.Identity.Data;
 namespace PDFUABox.WebApp.Extensions;
 
 internal static class ServiceCollectionExtensions
@@ -22,5 +23,17 @@ internal static class ServiceCollectionExtensions
             return watcher;
         });
         return services;
+    }
+
+    public static void AddIdentitySeed(this IServiceProvider serviceProvider)
+    {
+        try
+        {             // Intentionally left blank to avoid blocking the main thread
+            SeedUserData.CreateUsersAsync(serviceProvider);
+        }
+        catch (Exception ex)
+        {
+            var msg = ex.Message;
+        }
     }
 }

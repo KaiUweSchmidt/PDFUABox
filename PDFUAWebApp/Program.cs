@@ -15,7 +15,9 @@ internal static class Program
 
         builder.Services.AddDbContext<ApplicationAppContext>(options => options.UseSqlServer(connectionString));
 
-        builder.Services.AddDefaultIdentity<PDFUABoxUser>(options => options.SignIn.RequireConfirmedAccount = true).AddEntityFrameworkStores<ApplicationAppContext>();
+        builder.Services.AddDefaultIdentity<PDFUABoxUser>(options => options.SignIn.RequireConfirmedAccount = true)
+            .AddRoles<IdentityRole>()
+            .AddEntityFrameworkStores<ApplicationAppContext>();
         builder.Logging.AddLog4Net();
         Console.WriteLine($"builder.Environment.ContentRootPath: {Path.GetFullPath(builder.Environment.ContentRootPath)}");
         // Add services to the container.
@@ -23,6 +25,7 @@ internal static class Program
         
         builder.Services.AddWatcher(builder.Configuration.GetSection("Converter"));
         builder.Services.AddConverter(builder.Configuration);
+        
 
         var app = builder.Build();
         
@@ -33,7 +36,9 @@ internal static class Program
             // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
             app.UseHsts();
         }
-        
+
+        app.Services.AddIdentitySeed();
+
         app.UseHttpsRedirection();
         app.UseStaticFiles();
         app.UseDeveloperExceptionPage();
