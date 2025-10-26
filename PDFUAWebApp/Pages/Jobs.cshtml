@@ -4,12 +4,49 @@
     ViewData["Title"] = "Running Jobs";
 }
 
+<link href="https://cdnjs.cloudflare.com/ajax/libs/open-iconic/1.1.1/font/css/open-iconic-bootstrap.min.css" rel="stylesheet">
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+    $(document).ready(function () {
+        function pollRowStatus() {
+            $('#jobList tbody tr').each(function () {
+                var row = $(this);
+                var jobId = row.data('row-id');
+
+                // AJAX call to fetch the status
+                $.ajax({
+                    url: '/Jobs?handler=JobStatus', // Adjust the URL to match your Razor Page
+                    type: 'GET',
+                    data: { jobId: jobId },
+                    success: function (response) {
+                        // Update the status cell
+                        row.find('.status').text(response.status);
+                    },
+                    error: function () {
+                        row.find('.status').text('Error');
+                    }
+                });
+            });
+        }
+
+        // Poll every 5 seconds
+        setInterval(pollRowStatus, 1000);
+
+        // Initial poll
+        pollRowStatus();
+    });
+</script>
+
+
 <h1>Jobs</h1>
-<table class="table">
+<table class="table" id="jobList">
     <thead>
         <tr>
+            <th>Download</th>
             <th>ID</th>
             <th>InputFile</th>
+            <th>Created at</th>
             <th>Status</th>
         </tr>
     </thead>
@@ -17,10 +54,20 @@
     <tbody>
         @foreach (var job in Model.Jobs)
         {
-            <tr>
-                <td>@job.Id</td>
-                <td>@job.InputFile</td>
-                <td>@job.Status</td>
+            <tr data-row-id="@job.Id">
+                <td>
+@*                     @if (job.Status == ConverterServices.JobStatus.Completed ||
+                        job.Status == ConverterServices.JobStatus.CompletedWithWarnings
+                        )
+                    { *@
+                        <a href="@Url.Page("Jobs", "DownloadPDF", new { fileName = job.ResultFile })"
+                            class="fi-data-transfer-download">Download</a>
+                    @* } *@
+                </td>
+                <td >@job.Id</td>
+                <td>@job.InputFileDisplayName</td>
+                <td>@job.CreatedAt</td>
+                <td class="status">@job.Status</td>
             </tr>
         }
     </tbody>

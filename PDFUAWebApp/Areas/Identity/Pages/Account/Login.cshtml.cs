@@ -22,67 +22,45 @@ namespace PDFUABox.WebApp.Areas.Identity.Pages.Account
     {
         private readonly SignInManager<PDFUABoxUser> _signInManager;
         private readonly ILogger<LoginModel> _logger;
+        private readonly IConfiguration _configuration;
 
-        public LoginModel(SignInManager<PDFUABoxUser> signInManager, ILogger<LoginModel> logger)
+        public LoginModel(SignInManager<PDFUABoxUser> signInManager, ILogger<LoginModel> logger, IConfiguration configuration)
         {
             _signInManager = signInManager;
             _logger = logger;
+            _configuration = configuration;
         }
 
-        /// <summary>
-        ///     This API supports the ASP.NET Core Identity default UI infrastructure and is not intended to be used
-        ///     directly from your code. This API may change or be removed in future releases.
-        /// </summary>
         [BindProperty]
         public InputModel Input { get; set; }
 
-        /// <summary>
-        ///     This API supports the ASP.NET Core Identity default UI infrastructure and is not intended to be used
-        ///     directly from your code. This API may change or be removed in future releases.
-        /// </summary>
         public IList<AuthenticationScheme> ExternalLogins { get; set; }
 
-        /// <summary>
-        ///     This API supports the ASP.NET Core Identity default UI infrastructure and is not intended to be used
-        ///     directly from your code. This API may change or be removed in future releases.
-        /// </summary>
         public string ReturnUrl { get; set; }
 
-        /// <summary>
-        ///     This API supports the ASP.NET Core Identity default UI infrastructure and is not intended to be used
-        ///     directly from your code. This API may change or be removed in future releases.
-        /// </summary>
         [TempData]
         public string ErrorMessage { get; set; }
 
-        /// <summary>
-        ///     This API supports the ASP.NET Core Identity default UI infrastructure and is not intended to be used
-        ///     directly from your code. This API may change or be removed in future releases.
-        /// </summary>
         public class InputModel
         {
-            /// <summary>
-            ///     This API supports the ASP.NET Core Identity default UI infrastructure and is not intended to be used
-            ///     directly from your code. This API may change or be removed in future releases.
-            /// </summary>
             [Required]
             [EmailAddress]
             public string Email { get; set; }
 
-            /// <summary>
-            ///     This API supports the ASP.NET Core Identity default UI infrastructure and is not intended to be used
-            ///     directly from your code. This API may change or be removed in future releases.
-            /// </summary>
             [Required]
             [DataType(DataType.Password)]
             public string Password { get; set; }
 
-            /// <summary>
-            ///     This API supports the ASP.NET Core Identity default UI infrastructure and is not intended to be used
-            ///     directly from your code. This API may change or be removed in future releases.
-            /// </summary>
             [Display(Name = "Remember me?")]
             public bool RememberMe { get; set; }
+        }
+
+        public bool IsMailEnabled
+        {
+            get
+            {
+                return _configuration.GetValue<bool>("MailSettings:EnableMail");
+            }
         }
 
         public async Task OnGetAsync(string returnUrl = null)

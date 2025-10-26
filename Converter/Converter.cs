@@ -32,7 +32,6 @@ public class Converter
         _logger.Debug($"Converter created with WorkDirectory: {_workDirectory}, TargetDirectory: {_destinationDirectory}");
     }
 
-
     public string WorkDirectory { get => _workDirectory; }
     public string TargetDirectory { get => _destinationDirectory; }
 
@@ -54,7 +53,7 @@ public class Converter
         string workFile = Path.Combine(_workDirectory!, Path.GetFileName(inputFile));
         File.Copy(inputFile, workFile, true);
 
-        using Job job = new(userId,
+        Job job = new(userId,
                             workFile,
                             _destinationDirectory,
                             saveOptions ?? CreateDefaultSaveOptions());
@@ -95,5 +94,10 @@ public class Converter
 
     public IList<Job> GetAllJobs(string userId) {
         return _jobPool.Jobs.Where(j => j.UserId == userId).ToList();
+    }
+
+    internal Job? GetNextPendingJob()
+    {
+        return _jobPool.Jobs.FirstOrDefault(j => j.Status == JobStatus.Pending);
     }
 }

@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using PDFUABox.ConverterServices;
 using PDFUABox.WebApp.Areas.Identity.Data;
 using PDFUABox.WebApp.Data;
 using PDFUABox.WebApp.Extensions;
@@ -29,13 +30,23 @@ internal static class Program
         builder.Services.AddWatcher(builder.Configuration.GetSection("Converter"));
         builder.Services.AddConverter(builder.Configuration);
 
-    //    builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
-    //.AddCookie();
+        builder.Services.AddSingleton<JobWorker>();
+        //builder.Services.AddJobWorker();
 
-    //    builder.Services.AddAuthorization();
+
+        
+
+        //    builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
+        //.AddCookie();
+
+        //    builder.Services.AddAuthorization();
 
         var app = builder.Build();
-        
+
+
+        var jobWorker = app.Services.GetRequiredService<JobWorker>();
+        jobWorker.Start();
+
         // Configure the HTTP request pipeline.
         if (!app.Environment.IsDevelopment())
         {
