@@ -13,8 +13,18 @@ public class Job : IDisposable
 
     public string UserId { get; } = string.Empty;
     public string InputFile { get; set; }
+    public string InputFileDisplayName
+    {
+        get
+        {
+            return Path.GetFileName(InputFile);
+        }
+    }
+
     public string TargetDirectory { get; set; }
-    
+
+    public DateTime CreatedAt { get; } = DateTime.UtcNow;
+
     public string? ResultFile { get; set; }
 
     public Stream OutputStream { get; set; }
@@ -37,70 +47,89 @@ public class Job : IDisposable
         TargetDirectory = targetDirectory;
         OutputStream = new MemoryStream();
         SaveOptions = saveOptions;
+        ResultFile = Path.Combine(TargetDirectory!, Path.GetFileNameWithoutExtension(InputFile) + ".pdf");
     }
 
     public void Run()
     {
+        if (Status != JobStatus.Pending)
+        {
+            _logger.Debug($"Job already");
+            return;
+        }
+        Status = JobStatus.Failed;
         if (OutputStream == null)
             throw new InvalidOperationException("OutputStream is null.");
         if (SaveOptions == null)
             throw new InvalidOperationException("SaveOptions is null.");
-        _logger.Info($"Job for UserId {UserId} and Filename {Path.GetFileName(InputFile)} started.");
-        Status = JobStatus.InProgress;
-        Aspose.Words.Document doc = new Aspose.Words.Document(InputFile);
-        foreach (Field field in doc.Range.Fields)
+#pragma warning disable S2139 // Exceptions should be either logged or rethrown but not both
+        try
         {
-            if (field.Type == FieldType.FieldHyperlink)
+            _logger.Info($"Job for UserId {UserId} and Filename {Path.GetFileName(InputFile)} started.");
+            Status = JobStatus.InProgress;
+            Aspose.Words.Document doc = new Aspose.Words.Document(InputFile);
+            foreach (Field field in doc.Range.Fields)
             {
-                FieldHyperlink hyperlink = (FieldHyperlink)field;
-
-                if (hyperlink.SubAddress != null)
-                    continue;
-                if(hyperlink.ScreenTip == null)
+                if (field.Type == FieldType.FieldHyperlink)
                 {
-                    hyperlink.ScreenTip = hyperlink.DisplayResult;
-                }
-                
-            }
-        }
+                    FieldHyperlink hyperlink = (FieldHyperlink)field;
 
-        doc.Save(OutputStream, SaveOptions);
+                    if (hyperlink.SubAddress != null)
+                        continue;
+                    if (hyperlink.ScreenTip == null)
+                    {
+                        hyperlink.ScreenTip = hyperlink.DisplayResult;
+                    }
 
-        string validatedFile = Path.Combine(TargetDirectory!, Path.GetFileNameWithoutExtension(InputFile) + "_validated.xml");
-        
-        using var pdfDocument = new Aspose.Pdf.Document(OutputStream);
-        ResultFile = Path.Combine(TargetDirectory!, Path.GetFileNameWithoutExtension(InputFile) + ".pdf");
-
-        pdfDocument.Save(ResultFile);
-
-
-
-#pragma warning disable S125,S1135 // Sections of code should not be commented out
-        //TODO: we need a aspose license to enable encryption
-        //SetDocumentPrivileges(ResultFile);
-#pragma warning restore S125,S1135 // Sections of code should not be commented out
-
-        var isPDFUA = pdfDocument.Validate(validatedFile, PdfFormat.PDF_UA_1);
-        if (!isPDFUA)
-        {
-            Compliance? compliance = ComplianceReportSerializer.Deserialize(validatedFile);
-            if (compliance != null && compliance.File != null 
-                && compliance.File.General != null
-                && compliance.File.General.AllProblems() != null)
-            {
-                foreach (var problem in compliance.File.General.AllProblems())
-                {
-                    Console.WriteLine($"Error Code: {problem.Code}, Code: {problem.Code} Description {problem.Description}");
                 }
             }
-            Status = JobStatus.Completed;
 
-        }
-        else {
-            Status = JobStatus.Failed;
-        }
+            doc.Save(OutputStream, SaveOptions);
 
-        ResetOutputStream();
+            string validatedFile = Path.Combine(TargetDirectory!, Path.GetFileNameWithoutExtension(InputFile) + "_validated.xml");
+
+            using var pdfDocument = new Aspose.Pdf.Document(OutputStream);
+            
+
+            pdfDocument.Save(ResultFile);
+
+#pragma warning disable S125, S1135 // Sections of code should not be commented out
+            //TODO: we need a aspose license to enable encryption
+            //SetDocumentPrivileges(ResultFile);
+#pragma warning restore S125, S1135 // Sections of code should not be commented out
+
+            var isPDFUA = pdfDocument.Validate(validatedFile, PdfFormat.PDF_UA_1);
+            if (!isPDFUA)
+            {
+                Compliance? compliance = ComplianceReportSerializer.Deserialize(validatedFile);
+                if (compliance != null && compliance.File != null
+                    && compliance.File.General != null
+                    && compliance.File.General.AllProblems() != null)
+                {
+                    foreach (var problem in compliance.File.General.AllProblems())
+                    {
+                        Console.WriteLine($"Error Code: {problem.Code}, Code: {problem.Code} Description {problem.Description}");
+                    }
+                }
+                Status = JobStatus.CompletedWithWarnings;
+
+            }
+            else
+            {
+                Status = JobStatus.Completed;
+            }
+            ResetOutputStream();
+        }
+        catch (Exception ex)
+        {
+            _logger.Error($"Error processing job for UserId {UserId} and Filename {Path.GetFileName(InputFile)}: {ex.Message}", ex);
+            throw;
+        }
+        finally
+        {
+            _logger.Info($"Job for UserId {UserId} and Filename {Path.GetFileName(InputFile)} completed with status {Status}.");
+        }
+#pragma warning restore S2139 // Exceptions should be either logged or rethrown but not both
     }
 
 #pragma warning disable S1144 // Unused private types or members should be removed

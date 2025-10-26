@@ -19,8 +19,19 @@ internal static class ServiceCollectionExtensions
     {
         services.AddSingleton<Converter>(sp =>
         {
-            var watcher = new Converter(configuration);
-            return watcher;
+            var converter = new Converter(configuration);
+            return converter;
+        });
+        return services;
+    }
+
+    public static IServiceCollection AddJobWorker(this IServiceCollection services)
+    {
+        services.AddSingleton<JobWorker>(sp =>
+        {
+            var converter = services.BuildServiceProvider().GetRequiredService<Converter>();
+            var jobWorker = new JobWorker(converter);
+            return jobWorker;
         });
         return services;
     }
