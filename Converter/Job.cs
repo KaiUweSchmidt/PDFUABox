@@ -32,7 +32,9 @@ public class Job : IDisposable
 
     public JobStatus Status { get; set; } = JobStatus.Pending;
 
-    public Job(string userId, string inputFile, string targetDirectory, Aspose.Words.Saving.PdfSaveOptions saveOptions)
+    private readonly SignContext _signContext;
+
+    public Job(string userId, SignContext signContext, string inputFile, string targetDirectory, Aspose.Words.Saving.PdfSaveOptions saveOptions)
     {
         if (string.IsNullOrWhiteSpace(userId)) throw new ArgumentException("userId is null or empty.", nameof(userId));
         if (string.IsNullOrWhiteSpace(inputFile)) throw new ArgumentException("InputFile is null or empty.", nameof(inputFile));
@@ -48,6 +50,7 @@ public class Job : IDisposable
         OutputStream = new MemoryStream();
         SaveOptions = saveOptions;
         ResultFile = Path.Combine(TargetDirectory!, Path.GetFileNameWithoutExtension(InputFile) + ".pdf");
+        _signContext = signContext;
     }
 
     public void Run()
@@ -93,9 +96,10 @@ public class Job : IDisposable
 
             pdfDocument.Save(ResultFile);
 
+            Sign.SignDocument(ResultFile!, _signContext);
+
 #pragma warning disable S125, S1135 // Sections of code should not be commented out
-            //TODO: we need a aspose license to enable encryption
-            //SetDocumentPrivileges(ResultFile);
+            SetDocumentPrivileges(ResultFile!);
 #pragma warning restore S125, S1135 // Sections of code should not be commented out
 
             var isPDFUA = pdfDocument.Validate(validatedFile, PdfFormat.PDF_UA_1);
@@ -143,19 +147,24 @@ public class Job : IDisposable
         if (pdfFilePath == null)
             throw new InvalidOperationException("pdfFilePath is null.");
 
+        string tempFileName = Path.Combine(Path.GetDirectoryName(pdfFileName) ?? string.Empty,
+    Path.GetFileNameWithoutExtension(pdfFileName) + "_secured" + Path.GetExtension(pdfFileName));
+
+        File.Move(pdfFileName, tempFileName, true);
 
         using var fileSecurity = new Aspose.Pdf.Facades.PdfFileSecurity();
-        
-        pdfFileName = Path.Combine(pdfFilePath, "Encrypt Test.pdf");
-        fileSecurity.BindPdf(pdfFileName);
+        var privilege = Aspose.Pdf.Facades.DocumentPrivilege.ForbidAll;
+        privilege.ChangeAllowLevel = 1;
+        privilege.AllowPrint = true;
+        privilege.AllowScreenReaders = true;
+        privilege.AllowFillIn = true;
+        privilege.AllowAssembly = true;
 
-        fileSecurity.EncryptFile("User_P@ssw0rd", "OwnerP@ssw0rd", Aspose.Pdf.Facades.DocumentPrivilege.Print, Aspose.Pdf.Facades.KeySize.x256,
-    Aspose.Pdf.Facades.Algorithm.AES);
+        fileSecurity.BindPdf(tempFileName);
 
-        string encryptedFileName = Path.Combine(Path.GetDirectoryName(pdfFileName) ?? string.Empty,
-            Path.GetFileNameWithoutExtension(pdfFileName) + "_secured" + Path.GetExtension(pdfFileName));
+        fileSecurity.SetPrivilege(privilege);
 
-        fileSecurity.Save(encryptedFileName);
+        fileSecurity.Save(pdfFileName);
     }
 
     private void ResetOutputStream()
