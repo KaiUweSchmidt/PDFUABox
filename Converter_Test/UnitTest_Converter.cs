@@ -10,10 +10,12 @@ public class UnitTestConverter
     private readonly ITestOutputHelper _output;
     private readonly IConfiguration _configuration;
 
+    private readonly SignContext _signContext;
+
     public UnitTestConverter(ITestOutputHelper output)
     {
         _output = output;
-
+        _signContext = new SignContext("TODO", "TODO:Password");
         _configuration = new ConfigurationBuilder()
             .SetBasePath(Directory.GetCurrentDirectory())
             .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
@@ -39,9 +41,10 @@ public class UnitTestConverter
         //TODO: get real user id
         string userId = "TODO_GetPrincipal";
 
-        var job = converter.CreateJob(userId, inputFile, null);
+        var job = converter.CreateJob(userId, _signContext, inputFile, null);
         Assert.NotNull(job);
         await job.ConfigureAwait(true);
         job.Status.Should().Be(TaskStatus.RanToCompletion);
     }
 }
+

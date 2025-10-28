@@ -1,7 +1,16 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
+    <RootNamespace>PDFUABox.ConverterServices</RootNamespace>
   </PropertyGroup>
+
+  <ItemGroup>
+    <None Remove="Aspose.Total.NET.lic" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Include="Aspose.Total.NET.lic" />
+  </ItemGroup>
 
   <ItemGroup>
     <PackageReference Include="Aspose.PDF" />

@@ -9,5 +9,10 @@ namespace PDFUABox.WebApp.Areas.Identity.Data;
 // Add profile data for application users by adding properties to the PDFUABoxUser class
 public class PDFUABoxUser : IdentityUser
 {
+    public string FirstName { get; set; }
+    public string LastName { get; set; }
+    public string Certificate { get; set; }
+    public string CertificatePassword { get; set; }
+
 }
 

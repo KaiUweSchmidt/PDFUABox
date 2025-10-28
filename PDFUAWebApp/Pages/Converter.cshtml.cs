@@ -64,8 +64,9 @@ internal partial class ConverterModel : PageModel
         using var fileStream = new FileStream(file, FileMode.Create);
 
         Upload.CopyTo(fileStream); // TODO: make async
-        var userId = _userManager.GetUserIdSafe(User);
-        var jobId = _converter.CreateJob(userId, file).ConfigureAwait(false); 
+        var user = _userManager.GetUserAsync(User).Result;
+        SignContext signContext = new SignContext(user.Certificate, user.CertificatePassword);
+        var jobId = _converter.CreateJob(user.Id, signContext, file).ConfigureAwait(false); 
         // need to wait until job is finished in Queue - better implement a callback or SignalR
         //if(job.OutputStream != null)
         //{

@@ -1,5 +1,4 @@
 ﻿using Aspose.Words.Saving;
-using ConverterServices;
 using log4net;
 using Microsoft.Extensions.Configuration;
 
@@ -10,6 +9,11 @@ public class Converter
     private readonly ILog _logger = LogManager.GetLogger(typeof(Converter));
 
     private readonly JobPool _jobPool;
+
+    private readonly Aspose.Pdf.License _pdfLicense = new Aspose.Pdf.License();
+    private readonly Aspose.Words.License _wordsLicense = new Aspose.Words.License();
+
+    // Load the pdfLicense from file
 
     public Converter(IConfiguration configuration)
     {
@@ -29,6 +33,9 @@ public class Converter
 
         _jobPool = new JobPool();
 
+        _pdfLicense.SetLicense("Aspose.Total.NET.lic");
+        _wordsLicense.SetLicense("Aspose.Total.NET.lic");
+
         _logger.Debug($"Converter created with WorkDirectory: {_workDirectory}, TargetDirectory: {_destinationDirectory}");
     }
 
@@ -45,7 +52,7 @@ public class Converter
     /// <param name="saveOptions"></param>
     /// <returns></returns>
     /// <exception cref="InvalidOperationException"></exception>
-    public Task<Guid> CreateJob(string userId, string inputFile, Aspose.Words.Saving.PdfSaveOptions? saveOptions = null)
+    public Task<Guid> CreateJob(string userId, SignContext signContext, string inputFile, Aspose.Words.Saving.PdfSaveOptions? saveOptions = null)
     {
 
         _logger.Debug($"CreateJob with inputfile: {inputFile}");
@@ -53,9 +60,7 @@ public class Converter
         string workFile = Path.Combine(_workDirectory!, Path.GetFileName(inputFile));
         File.Copy(inputFile, workFile, true);
 
-        Job job = new(userId,
-                            workFile,
-                            _destinationDirectory,
+        Job job = new(userId, signContext, workFile, _destinationDirectory,
                             saveOptions ?? CreateDefaultSaveOptions());
         _jobPool.AddJob(job);
         return Task.FromResult(job.Id);
