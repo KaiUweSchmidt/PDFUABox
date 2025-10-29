@@ -1,5 +1,6 @@
 ﻿using System.Runtime.InteropServices;
 using Aspose.Pdf;
+using Aspose.Pdf.Facades;
 using Aspose.Words.Fields;
 using log4net;
 using PDFUABox.ConverterServices.ComplianceReportModels;
@@ -73,7 +74,7 @@ public class Job : IDisposable
             Aspose.Words.Document doc = new Aspose.Words.Document(InputFile);
             foreach (Field field in doc.Range.Fields)
             {
-                if (field.Type == FieldType.FieldHyperlink)
+                if (field.Type == Aspose.Words.Fields.FieldType.FieldHyperlink)
                 {
                     FieldHyperlink hyperlink = (FieldHyperlink)field;
 
@@ -87,20 +88,21 @@ public class Job : IDisposable
                 }
             }
 
+            if(string.IsNullOrEmpty(doc.BuiltInDocumentProperties.Title)) doc.BuiltInDocumentProperties.Title = Path.GetFileNameWithoutExtension(InputFile);
+
+            SaveOptions.OptimizeOutput = true;
             doc.Save(OutputStream, SaveOptions);
 
             string validatedFile = Path.Combine(TargetDirectory!, Path.GetFileNameWithoutExtension(InputFile) + "_validated.xml");
 
             using var pdfDocument = new Aspose.Pdf.Document(OutputStream);
-            
+            pdfDocument.Info.Creator = "PDFUABox Converter Service";
+            pdfDocument.Info.Producer = "PDFUABox Converter Service";
 
             pdfDocument.Save(ResultFile);
 
-            Sign.SignDocument(ResultFile!, _signContext);
 
-#pragma warning disable S125, S1135 // Sections of code should not be commented out
-            SetDocumentPrivileges(ResultFile!);
-#pragma warning restore S125, S1135 // Sections of code should not be commented out
+            Sign.SignDocument(ResultFile!, _signContext);
 
             var isPDFUA = pdfDocument.Validate(validatedFile, PdfFormat.PDF_UA_1);
             if (!isPDFUA)
@@ -136,36 +138,6 @@ public class Job : IDisposable
 #pragma warning restore S2139 // Exceptions should be either logged or rethrown but not both
     }
 
-#pragma warning disable S1144 // Unused private types or members should be removed
-    private static void SetDocumentPrivileges(string pdfFileName)
-#pragma warning restore S1144 // Unused private types or members should be removed
-    {
-        if (string.IsNullOrEmpty(pdfFileName))
-            throw new ArgumentNullException(nameof(pdfFileName), "pdfFileName is null or empty.");
-
-        var pdfFilePath = Path.GetDirectoryName(pdfFileName);
-        if (pdfFilePath == null)
-            throw new InvalidOperationException("pdfFilePath is null.");
-
-        string tempFileName = Path.Combine(Path.GetDirectoryName(pdfFileName) ?? string.Empty,
-    Path.GetFileNameWithoutExtension(pdfFileName) + "_secured" + Path.GetExtension(pdfFileName));
-
-        File.Move(pdfFileName, tempFileName, true);
-
-        using var fileSecurity = new Aspose.Pdf.Facades.PdfFileSecurity();
-        var privilege = Aspose.Pdf.Facades.DocumentPrivilege.ForbidAll;
-        privilege.ChangeAllowLevel = 1;
-        privilege.AllowPrint = true;
-        privilege.AllowScreenReaders = true;
-        privilege.AllowFillIn = true;
-        privilege.AllowAssembly = true;
-
-        fileSecurity.BindPdf(tempFileName);
-
-        fileSecurity.SetPrivilege(privilege);
-
-        fileSecurity.Save(pdfFileName);
-    }
 
     private void ResetOutputStream()
     {

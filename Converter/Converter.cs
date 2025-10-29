@@ -15,11 +15,17 @@ public class Converter
 
     // Load the pdfLicense from file
 
+    private readonly string _userPassword;
+    private readonly string _ownerPassword;
+
     public Converter(IConfiguration configuration)
     {
         ArgumentNullException.ThrowIfNull(configuration);
 
         var converterConfiguration = configuration.GetSection("Converter");
+
+        _userPassword = converterConfiguration["UserPasswordPriv"] ?? "";
+        _ownerPassword = converterConfiguration["OwnerPasswordPriv"] ?? "";
 
         this._workDirectory = converterConfiguration["PDFUABOX_WORK"] ??
             throw new ArgumentException("No configuration for work directory ", nameof(configuration));
@@ -61,7 +67,7 @@ public class Converter
         File.Copy(inputFile, workFile, true);
 
         Job job = new(userId, signContext, workFile, _destinationDirectory,
-                            saveOptions ?? CreateDefaultSaveOptions());
+                            saveOptions ?? CreateDefaultSaveOptions(_userPassword,_ownerPassword));
         _jobPool.AddJob(job);
         return Task.FromResult(job.Id);
     }
@@ -80,7 +86,7 @@ public class Converter
         }).ConfigureAwait(false);
     }
 
-    private static Aspose.Words.Saving.PdfSaveOptions CreateDefaultSaveOptions()
+    private static Aspose.Words.Saving.PdfSaveOptions CreateDefaultSaveOptions(string userPassword, string ownerPassword)
     {
         Aspose.Words.Saving.PdfSaveOptions saveOptions = new Aspose.Words.Saving.PdfSaveOptions();
         saveOptions.PageMode = PdfPageMode.UseOutlines;
@@ -94,8 +100,11 @@ public class Converter
         saveOptions.Compliance = PdfCompliance.PdfUa1;
         saveOptions.CustomPropertiesExport = PdfCustomPropertiesExport.Metadata;
         saveOptions.UpdateFields = false;
+        saveOptions.EncryptionDetails = new Aspose.Words.Saving.PdfEncryptionDetails(userPassword, ownerPassword, PdfPermissions.ContentCopyForAccessibility);
+        
         return saveOptions;
     }
+
 
     public IList<Job> GetAllJobs(string userId) {
         return _jobPool.Jobs.Where(j => j.UserId == userId).ToList();
