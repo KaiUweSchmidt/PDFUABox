@@ -39,12 +39,19 @@ internal static class ServiceCollectionExtensions
     public static void AddIdentitySeed(this IServiceProvider serviceProvider)
     {
         try
-        {             // Intentionally left blank to avoid blocking the main thread
+            {   // Intentionally left blank to avoid blocking the main thread
             SeedUserData.CreateUsersAsync(serviceProvider);
         }
-        catch (Exception ex)
+        catch (InvalidOperationException ex)
         {
             var msg = ex.Message;
+            Console.WriteLine($"Fehler InvalidOperationException beim Anlegen der Standardbenutzer: {msg}");
         }
+        catch (ArgumentNullException ex)
+        {
+            var msg = ex.Message;
+            Console.WriteLine($"Fehler ArgumentNullException beim Anlegen der Standardbenutzer: {msg}");
+        }
+        // Weitere spezifische Ausnahmen können hier ergänzt werden, falls bekannt
     }
 }

@@ -19,7 +19,6 @@ internal partial class ConverterModel : PageModel
     private readonly UserManager<PDFUABoxUser> _userManager;
     private readonly string _uploadFolder = string.Empty;
     private readonly string _outputFolder = string.Empty;
-    private readonly string _userId = string.Empty;
 
     // LoggerMessage-Delegate für die LogInformation-Nachricht
     private static readonly Action<ILogger, string, Exception?> _logConverterOnGet =
@@ -64,23 +63,17 @@ internal partial class ConverterModel : PageModel
         using var fileStream = new FileStream(file, FileMode.Create);
 
         Upload.CopyTo(fileStream); // TODO: make async
-        var user = _userManager.GetUserAsync(User).Result;
+        var userTask = _userManager.GetUserAsync(User);
+        userTask.Wait();
+        var user = userTask.Result;
+        if (user == null || user.Certificate == null || user.CertificatePassword == null)
+        {
+            // Fehlerbehandlung, z.B. Redirect oder Fehlermeldung anzeigen
+            ModelState.AddModelError(string.Empty, "Benutzerzertifikat oder Passwort nicht gefunden.");
+            return Page();
+        }
         SignContext signContext = new SignContext(user.Certificate, user.CertificatePassword);
         var jobId = _converter.CreateJob(user.Id, signContext, file).ConfigureAwait(false); 
-        // need to wait until job is finished in Queue - better implement a callback or SignalR
-        //if(job.OutputStream != null)
-        //{
-        //    System.IO.File.Move(job.ResultFile, outputFile,true); //TODO: Review if this is necessary
-        //    using var outputFileStream = new FileStream(outputFile, FileMode.Create);
-        //    job.OutputStream.Position = 0;
-        //    await job.OutputStream.CopyToAsync(outputFileStream).ConfigureAwait(false);
-        //    _logConverterOnPostAsync(_logger, $"File conversion completed: {outputFile}", null);
-        //    outputFileStream.Close();
-        //    return File(
-        //        await System.IO.File.ReadAllBytesAsync(outputFile).ConfigureAwait(false)
-        //        , "application/pdf",
-        //        Path.GetFileName(outputFile));
-        //}
         return RedirectToPage("/Jobs");
     }
 

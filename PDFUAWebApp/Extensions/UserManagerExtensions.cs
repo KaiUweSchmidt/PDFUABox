@@ -10,7 +10,10 @@ internal static class UserManagerExtensions
 {
     public static string GetUserIdSafe(this UserManager<PDFUABoxUser> userManager, System.Security.Claims.ClaimsPrincipal user)
     {
-        ArgumentNullException.ThrowIfNull(nameof(user), "User cannot be null.");
+        if (user is null)
+        {
+            throw new ArgumentNullException(nameof(user), "User cannot be null.");
+        }
         var userEntity = userManager.GetUserAsync(user).Result; // Get the current user
         if (userEntity == null)
         {

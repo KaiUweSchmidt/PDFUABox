@@ -4,10 +4,13 @@ using System.Reflection;
 
 namespace PDFUABox.WebApp.Pages;
 
-public class RequiredIfAttribute : ValidationAttribute
+public sealed class RequiredIfAttribute : ValidationAttribute
 {
     private readonly string _dependentProperty;
     private readonly object _targetValue;
+
+    public string DependentProperty => _dependentProperty;
+    public object TargetValue => _targetValue;
 
     public RequiredIfAttribute(string dependentProperty, object targetValue)
     {
@@ -15,7 +18,7 @@ public class RequiredIfAttribute : ValidationAttribute
         _targetValue = targetValue;
     }
 
-    protected override ValidationResult IsValid(object value, ValidationContext validationContext)
+    protected override ValidationResult? IsValid(object? value, ValidationContext validationContext)
     {
         var dependentProperty = validationContext.ObjectType.GetProperty(_dependentProperty);
         if (dependentProperty == null)
@@ -32,6 +35,6 @@ public class RequiredIfAttribute : ValidationAttribute
             }
         }
 
-        return ValidationResult.Success;
+        return ValidationResult.Success!;
     }
 }

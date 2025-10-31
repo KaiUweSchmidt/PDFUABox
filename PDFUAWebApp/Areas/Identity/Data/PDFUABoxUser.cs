@@ -14,5 +14,13 @@ public class PDFUABoxUser : IdentityUser
     public string Certificate { get; set; }
     public string CertificatePassword { get; set; }
 
+    public PDFUABoxUser()
+    {
+        FirstName = string.Empty;
+        LastName = string.Empty;
+        Certificate = string.Empty;
+        CertificatePassword = string.Empty;
+    }
+
 }
 
