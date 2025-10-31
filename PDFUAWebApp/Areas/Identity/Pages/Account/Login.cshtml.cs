@@ -38,7 +38,7 @@ namespace PDFUABox.WebApp.Areas.Identity.Pages.Account
         public IList<AuthenticationScheme> ExternalLogins { get; private set; }
 
         // CA1056: Property type changed to System.Uri
-        public Uri ReturnUrl { get; set; }
+        public string ReturnUrl { get; set; }
 
         [TempData]
         public string ErrorMessage { get; set; }
@@ -51,62 +51,31 @@ namespace PDFUABox.WebApp.Areas.Identity.Pages.Account
             }
         }
 
-        // Keep existing string-based handler (framework will bind query string to string).
-        // This converts and forwards to the Uri-based overload to satisfy CA1054.
-        public Task OnGetAsync(string returnUrl = null)
-        {
-            Uri uri = null;
-            if (!string.IsNullOrEmpty(returnUrl))
-            {
-                Uri.TryCreate(returnUrl, UriKind.RelativeOrAbsolute, out uri);
-            }
 
-            return OnGetAsync(uri);
-        }
 
         // New Uri-based handler to satisfy CA1054 and to back the Uri-typed property.
-        public async Task OnGetAsync(Uri returnUrl)
+        public async Task OnGetAsync(string returnUrl)
         {
             if (!string.IsNullOrEmpty(ErrorMessage))
             {
                 ModelState.AddModelError(string.Empty, ErrorMessage);
             }
 
-            var returnUrlString = returnUrl?.OriginalString ?? Url.Content("~/");
+            returnUrl = returnUrl ?? Url.Content("~/");
 
             // Clear the existing external cookie to ensure a clean login process
             await HttpContext.SignOutAsync(IdentityConstants.ExternalScheme).ConfigureAwait(false);
 
             ExternalLogins = (await _signInManager.GetExternalAuthenticationSchemesAsync().ConfigureAwait(false)).ToList();
 
-            // Safe URI creation: if incoming value was null or invalid, create from the resolved string.
-            if (returnUrl == null || string.IsNullOrEmpty(returnUrl.OriginalString))
-            {
-                Uri.TryCreate(returnUrlString, UriKind.RelativeOrAbsolute, out var resolvedUri);
-                ReturnUrl = resolvedUri ?? new Uri(returnUrlString, UriKind.RelativeOrAbsolute);
-            }
-            else
-            {
-                ReturnUrl = returnUrl;
-            }
+            ReturnUrl = returnUrl;
         }
 
-        // Keep existing string-based handler and forward to Uri overload.
-        public Task<IActionResult> OnPostAsync(string returnUrl = null)
-        {
-            Uri uri = null;
-            if (!string.IsNullOrEmpty(returnUrl))
-            {
-                Uri.TryCreate(returnUrl, UriKind.RelativeOrAbsolute, out uri);
-            }
-
-            return OnPostAsync(uri);
-        }
 
         // Uri-based POST handler
-        public async Task<IActionResult> OnPostAsync(Uri returnUrl)
+        public async Task<IActionResult> OnPostAsync(string returnUrl)
         {
-            var returnUrlString = returnUrl?.OriginalString ?? Url.Content("~/");
+            returnUrl =  returnUrl ?? Url.Content("~/");
 
             ExternalLogins = (await _signInManager.GetExternalAuthenticationSchemesAsync().ConfigureAwait(false)).ToList();
 
@@ -117,11 +86,11 @@ namespace PDFUABox.WebApp.Areas.Identity.Pages.Account
                 {
                     // CA1848: Use LoggerMessage delegate for performance
                     s_logUserLoggedIn(_logger, null);
-                    return LocalRedirect(returnUrlString);
+                    return LocalRedirect(returnUrl);
                 }
                 if (result.RequiresTwoFactor)
                 {
-                    return RedirectToPage("./LoginWith2fa", new { ReturnUrl = returnUrlString, RememberMe = Input.RememberMe });
+                    return RedirectToPage("./LoginWith2fa", new { ReturnUrl = returnUrl, RememberMe = Input.RememberMe });
                 }
                 if (result.IsLockedOut)
                 {

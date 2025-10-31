@@ -31,11 +31,23 @@ public class Converter
             throw new ArgumentException("No configuration for work directory ", nameof(configuration));
         if (string.IsNullOrWhiteSpace(_workDirectory))
             throw new ArgumentException("Work directory is null oder leer.", nameof(configuration));
-
         this._destinationDirectory = converterConfiguration["PDFUABOX_DEST"] ??
             throw new ArgumentException("No configuration for destination directory ", nameof(configuration));
         if (string.IsNullOrWhiteSpace(_destinationDirectory))
             throw new ArgumentException("Target directory is null oder leer.", nameof(configuration));
+
+        string? baseDir = configuration["PDFUABOX_BASEDIR"];
+        if (!string.IsNullOrWhiteSpace(baseDir))
+        {
+            _logger.Debug($"Using baseDir: {baseDir}");
+            this._workDirectory = System.IO.Path.Combine(baseDir, this._workDirectory);
+            if (!Directory.Exists(_workDirectory)) new DirectoryInfo(_workDirectory).Create();
+
+            this._destinationDirectory = System.IO.Path.Combine(baseDir, this._destinationDirectory);
+            if (!Directory.Exists(_destinationDirectory)) new DirectoryInfo(_destinationDirectory).Create();
+        }
+        _logger.Debug($"Using _workDirectory: {_workDirectory}");
+        _logger.Debug($"Using _destinationDirectory: {_destinationDirectory}");
 
         _jobPool = new JobPool();
 
@@ -64,6 +76,7 @@ public class Converter
         _logger.Debug($"CreateJob with inputfile: {inputFile}");
 
         string workFile = Path.Combine(_workDirectory!, Path.GetFileName(inputFile));
+
         File.Copy(inputFile, workFile, true);
 
         Job job = new(userId, signContext, workFile, _destinationDirectory,

@@ -1,4 +1,5 @@
-﻿using Microsoft.Extensions.Configuration;
+﻿using log4net;
+using Microsoft.Extensions.Configuration;
 
 // Fix für IDE0044 und S2933: Feld als readonly deklarieren
 // Fix für S4487: Feld entfernen, da es nicht verwendet wird
@@ -10,6 +11,7 @@ namespace PDFUABox.ConverterServices;
 
 public class Watcher : IDisposable
 {
+    private readonly ILog _logger = LogManager.GetLogger(typeof(Watcher));
     private readonly string sourceDirectory;
 
     public string SourceDirectory { get => sourceDirectory; }
@@ -21,6 +23,12 @@ public class Watcher : IDisposable
             throw new ArgumentNullException(nameof(configuration), "No configuration");
         this.sourceDirectory = configuration["PDFUABOX_SRC"] ??
             throw new ArgumentException("No source directory for watcher", nameof(configuration));
+        string? baseDir = configuration["PDFUABOX_BASEDIR"];
+        if (!string.IsNullOrWhiteSpace(baseDir))
+        {
+            this.sourceDirectory = System.IO.Path.Combine(baseDir, this.sourceDirectory);
+        }
+        _logger.Info($"Watcher created for SourceDirectory: {sourceDirectory}");
     }
 
     public void Start()
