@@ -26,6 +26,9 @@ jobs:
       - name: Build with dotnet
         run: dotnet build --configuration Release
 
+      - name: Test 🧪
+        run: dotnet test PDFUABox.sln --configuration Release --no-build
+
       - name: dotnet publish
         run: dotnet publish -c Release -o "${{env.DOTNET_ROOT}}/pdfuabox"
 
@@ -54,3 +57,4 @@ jobs:
           package: .
 
           publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE_9ED6A991BB0F44E1921D80CC3BF4E1F2 }}
+
