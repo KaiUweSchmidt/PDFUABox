@@ -13,6 +13,17 @@ using PDFUABox.WebApp.Areas.Identity.Data;
 
 namespace PDFUABox.WebApp.Areas.Identity.Pages.Account.Manage
 {
+    public class InputModel
+    {
+        /// <summary>
+        ///     This API supports the ASP.NET Core Identity default UI infrastructure and is not intended to be used
+        ///     directly from your code. This API may change or be removed in future releases.
+        /// </summary>
+        [Phone]
+        [Display(Name = "Phone number")]
+        public string PhoneNumber { get; set; }
+    }
+
     public class IndexModel : PageModel
     {
         private readonly UserManager<PDFUABoxUser> _userManager;
@@ -45,21 +56,6 @@ namespace PDFUABox.WebApp.Areas.Identity.Pages.Account.Manage
         /// </summary>
         [BindProperty]
         public InputModel Input { get; set; }
-
-        /// <summary>
-        ///     This API supports the ASP.NET Core Identity default UI infrastructure and is not intended to be used
-        ///     directly from your code. This API may change or be removed in future releases.
-        /// </summary>
-        public class InputModel
-        {
-            /// <summary>
-            ///     This API supports the ASP.NET Core Identity default UI infrastructure and is not intended to be used
-            ///     directly from your code. This API may change or be removed in future releases.
-            /// </summary>
-            [Phone]
-            [Display(Name = "Phone number")]
-            public string PhoneNumber { get; set; }
-        }
 
         private async Task LoadAsync(PDFUABoxUser user)
         {

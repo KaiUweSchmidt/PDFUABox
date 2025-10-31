@@ -14,6 +14,7 @@ using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Configuration;
 using PDFUABox.WebApp.Areas.Identity.Data;
 
 namespace PDFUABox.WebApp.Areas.Identity.Pages.Account
@@ -34,26 +35,13 @@ namespace PDFUABox.WebApp.Areas.Identity.Pages.Account
         [BindProperty]
         public InputModel Input { get; set; }
 
-        public IList<AuthenticationScheme> ExternalLogins { get; set; }
+        public IList<AuthenticationScheme> ExternalLogins { get; private set; }
 
-        public string ReturnUrl { get; set; }
+        // CA1056: Property type changed to System.Uri
+        public Uri ReturnUrl { get; set; }
 
         [TempData]
         public string ErrorMessage { get; set; }
-
-        public class InputModel
-        {
-            [Required]
-            [EmailAddress]
-            public string Email { get; set; }
-
-            [Required]
-            [DataType(DataType.Password)]
-            public string Password { get; set; }
-
-            [Display(Name = "Remember me?")]
-            public bool RememberMe { get; set; }
-        }
 
         public bool IsMailEnabled
         {
@@ -63,46 +51,81 @@ namespace PDFUABox.WebApp.Areas.Identity.Pages.Account
             }
         }
 
-        public async Task OnGetAsync(string returnUrl = null)
+        // Keep existing string-based handler (framework will bind query string to string).
+        // This converts and forwards to the Uri-based overload to satisfy CA1054.
+        public Task OnGetAsync(string returnUrl = null)
+        {
+            Uri uri = null;
+            if (!string.IsNullOrEmpty(returnUrl))
+            {
+                Uri.TryCreate(returnUrl, UriKind.RelativeOrAbsolute, out uri);
+            }
+
+            return OnGetAsync(uri);
+        }
+
+        // New Uri-based handler to satisfy CA1054 and to back the Uri-typed property.
+        public async Task OnGetAsync(Uri returnUrl)
         {
             if (!string.IsNullOrEmpty(ErrorMessage))
             {
                 ModelState.AddModelError(string.Empty, ErrorMessage);
             }
 
-            returnUrl ??= Url.Content("~/");
+            var returnUrlString = returnUrl?.OriginalString ?? Url.Content("~/");
 
             // Clear the existing external cookie to ensure a clean login process
-            await HttpContext.SignOutAsync(IdentityConstants.ExternalScheme);
+            await HttpContext.SignOutAsync(IdentityConstants.ExternalScheme).ConfigureAwait(false);
 
-            ExternalLogins = (await _signInManager.GetExternalAuthenticationSchemesAsync()).ToList();
+            ExternalLogins = (await _signInManager.GetExternalAuthenticationSchemesAsync().ConfigureAwait(false)).ToList();
 
-            ReturnUrl = returnUrl;
+            // Safe URI creation: if incoming value was null or invalid, create from the resolved string.
+            if (returnUrl == null || string.IsNullOrEmpty(returnUrl.OriginalString))
+            {
+                Uri.TryCreate(returnUrlString, UriKind.RelativeOrAbsolute, out var resolvedUri);
+                ReturnUrl = resolvedUri ?? new Uri(returnUrlString, UriKind.RelativeOrAbsolute);
+            }
+            else
+            {
+                ReturnUrl = returnUrl;
+            }
         }
 
-        public async Task<IActionResult> OnPostAsync(string returnUrl = null)
+        // Keep existing string-based handler and forward to Uri overload.
+        public Task<IActionResult> OnPostAsync(string returnUrl = null)
         {
-            returnUrl ??= Url.Content("~/");
+            Uri uri = null;
+            if (!string.IsNullOrEmpty(returnUrl))
+            {
+                Uri.TryCreate(returnUrl, UriKind.RelativeOrAbsolute, out uri);
+            }
 
-            ExternalLogins = (await _signInManager.GetExternalAuthenticationSchemesAsync()).ToList();
+            return OnPostAsync(uri);
+        }
+
+        // Uri-based POST handler
+        public async Task<IActionResult> OnPostAsync(Uri returnUrl)
+        {
+            var returnUrlString = returnUrl?.OriginalString ?? Url.Content("~/");
+
+            ExternalLogins = (await _signInManager.GetExternalAuthenticationSchemesAsync().ConfigureAwait(false)).ToList();
 
             if (ModelState.IsValid)
             {
-                // This doesn't count login failures towards account lockout
-                // To enable password failures to trigger account lockout, set lockoutOnFailure: true
-                var result = await _signInManager.PasswordSignInAsync(Input.Email, Input.Password, Input.RememberMe, lockoutOnFailure: false);
+                var result = await _signInManager.PasswordSignInAsync(Input.Email, Input.Password, Input.RememberMe, lockoutOnFailure: false).ConfigureAwait(false);
                 if (result.Succeeded)
                 {
-                    _logger.LogInformation("User logged in.");
-                    return LocalRedirect(returnUrl);
+                    // CA1848: Use LoggerMessage delegate for performance
+                    s_logUserLoggedIn(_logger, null);
+                    return LocalRedirect(returnUrlString);
                 }
                 if (result.RequiresTwoFactor)
                 {
-                    return RedirectToPage("./LoginWith2fa", new { ReturnUrl = returnUrl, RememberMe = Input.RememberMe });
+                    return RedirectToPage("./LoginWith2fa", new { ReturnUrl = returnUrlString, RememberMe = Input.RememberMe });
                 }
                 if (result.IsLockedOut)
                 {
-                    _logger.LogWarning("User account locked out.");
+                    s_logLoginPageAccessed(_logger, "User account locked out.", null);
                     return RedirectToPage("./Lockout");
                 }
                 else
@@ -112,8 +135,35 @@ namespace PDFUABox.WebApp.Areas.Identity.Pages.Account
                 }
             }
 
-            // If we got this far, something failed, redisplay form
             return Page();
         }
+
+        // Removed nullable annotation on Exception to fix CS8632 (file has #nullable disable)
+        private static readonly Action<ILogger, string, Exception> s_logLoginPageAccessed =
+            LoggerMessage.Define<string>(
+                LogLevel.Information,
+                new EventId(0, nameof(OnGetAsync)),
+                "Login.cshtml.cs {Message}");
+
+        // LoggerMessage delegate for "User logged in."
+        private static readonly Action<ILogger, Exception> s_logUserLoggedIn =
+            LoggerMessage.Define(
+                LogLevel.Information,
+                new EventId(1, nameof(LoginModel)),
+                "User logged in.");
+    }
+
+    public class InputModel
+    {
+        [Required]
+        [EmailAddress]
+        public string Email { get; set; }
+
+        [Required]
+        [DataType(DataType.Password)]
+        public string Password { get; set; }
+
+        [Display(Name = "Remember me?")]
+        public bool RememberMe { get; set; }
     }
 }
