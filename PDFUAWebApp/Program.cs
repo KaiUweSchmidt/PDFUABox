@@ -21,9 +21,14 @@ internal static class Program
         builder.Services.AddDefaultIdentity<PDFUABoxUser>(options => options.SignIn.RequireConfirmedAccount = true)
             .AddRoles<IdentityRole>()
             .AddEntityFrameworkStores<ApplicationAppContext>();
+
         builder.Services.AddHealthCheck(builder.Configuration);
 
+        
+
         builder.Logging.AddLog4Net();
+        builder.Logging.AddConsole();
+        builder.Logging.AddDebug();
         Console.WriteLine($"builder.Environment.ContentRootPath: {Path.GetFullPath(builder.Environment.ContentRootPath)}");
         // Add services to the container.
         builder.Services.AddRazorPages();
@@ -34,6 +39,8 @@ internal static class Program
         builder.Services.AddSingleton<JobWorker>();
 
         var app = builder.Build();
+
+        app.Logger.LogInformation($"Application starting up... ContentRoot: {builder.Environment.ContentRootPath}");
 
         app.UseHealthChecks("/health");
 
