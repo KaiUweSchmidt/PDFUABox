@@ -13,6 +13,7 @@ internal static class Program
     public static void Main(string[] args)
     {
         var builder = WebApplication.CreateBuilder(args);
+        builder.Configuration["PDFUABOX_BASEDIR"] = builder.Environment.ContentRootPath;
         var connectionString = builder.Configuration.GetConnectionString("ApplicationAppContextConnection") ?? throw new InvalidOperationException("Connection string 'ApplicationAppContextConnection' not found.");
 
         builder.Services.AddDbContext<ApplicationAppContext>(options => options.UseSqlServer(connectionString));
