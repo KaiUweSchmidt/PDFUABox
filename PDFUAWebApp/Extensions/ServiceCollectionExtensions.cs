@@ -1,4 +1,7 @@
-﻿using PDFUABox.ConverterServices;
+﻿using Microsoft.Data.SqlClient;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Diagnostics.HealthChecks;
+using PDFUABox.ConverterServices;
 using PDFUABox.WebApp.Areas.Identity.Data;
 namespace PDFUABox.WebApp.Extensions;
 
@@ -36,6 +39,27 @@ internal static class ServiceCollectionExtensions
         return services;
     }
 
+    public static void AddHealthCheck(this IServiceCollection services, IConfiguration configuration)
+    {
+        services.AddHealthChecks()
+        .AddCheck("Database", () =>
+        {
+            // Example: Check database connection
+            using (var connection = new SqlConnection(configuration.GetSection("ConnectionStrings")["ApplicationAppContextConnection"]))
+            {
+                try
+                {
+                    connection.Open();
+                    return HealthCheckResult.Healthy("Database is healthy");
+                }
+                catch
+                {
+                    return HealthCheckResult.Unhealthy("Database is unhealthy");
+                }
+            }
+        });
+    }
+
     public static void AddIdentitySeed(this IServiceProvider serviceProvider)
     {
         try
@@ -54,4 +78,7 @@ internal static class ServiceCollectionExtensions
         }
         // Weitere spezifische Ausnahmen können hier ergänzt werden, falls bekannt
     }
+
+
+
 }

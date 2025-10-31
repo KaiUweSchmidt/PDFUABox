@@ -20,7 +20,7 @@ internal static class Program
         builder.Services.AddDefaultIdentity<PDFUABoxUser>(options => options.SignIn.RequireConfirmedAccount = true)
             .AddRoles<IdentityRole>()
             .AddEntityFrameworkStores<ApplicationAppContext>();
-
+        builder.Services.AddHealthCheck(builder.Configuration);
 
         builder.Logging.AddLog4Net();
         Console.WriteLine($"builder.Environment.ContentRootPath: {Path.GetFullPath(builder.Environment.ContentRootPath)}");
@@ -31,18 +31,10 @@ internal static class Program
         builder.Services.AddConverter(builder.Configuration);
 
         builder.Services.AddSingleton<JobWorker>();
-        //builder.Services.AddJobWorker();
-
-
-        
-
-        //    builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
-        //.AddCookie();
-
-        //    builder.Services.AddAuthorization();
 
         var app = builder.Build();
 
+        app.UseHealthChecks("/health");
 
         var jobWorker = app.Services.GetRequiredService<JobWorker>();
         jobWorker.Start();
