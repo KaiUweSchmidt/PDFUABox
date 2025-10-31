@@ -30,7 +30,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <None Update="appsettings.json">
+    <None Update="appsettings_CS_Test.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Update="TestData\2025_10_Rechnung_5619948855_bearbeitet.docx">
