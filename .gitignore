@@ -24,3 +24,5 @@
 /PDFUAWebApp/wwwroot/PDFUABoxFiles/out
 /PDFUAWebApp.Test/bin/Debug/net8.0
 /PDFUAWebApp.Test/obj
+/Converter/bin/Release/net8.0
+/PDFUAWebApp/bin/Release/net8.0/win-x64
